@@ -1,0 +1,235 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Try Again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "topTracks": "Top Tracks",
+    "quiz": "Quiz",
+    "compare": "Compare",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login with Spotify"
+  },
+  "auth": {
+    "welcome": "Welcome to Latte Music",
+    "description": "Discover your musical taste with beautiful 3D visualizations of your top Spotify tracks.",
+    "loginButton": "Connect with Spotify",
+    "features": {
+      "topTracks": "View your top 30 most played tracks",
+      "animations": "Beautiful 3D card animations",
+      "player": "Play music directly in your browser",
+      "responsive": "Responsive design for all devices"
+    },
+    "disclaimer": "By connecting, you agree to let Latte access your Spotify listening data. We only read your top tracks and basic profile information.",
+    "authRequired": "Authentication Required",
+    "authRequiredMessage": "Please log in with your Spotify account to access this feature.",
+    "authFailed": "Authentication failed. Please try again.",
+    "connecting": "Connecting to Spotify...",
+    "authenticating": "Authenticating with Spotify...",
+    "success": "Authentication successful! Redirecting...",
+    "invalidClient": "Invalid client configuration. Please check your settings."
+  },
+  "timeRange": {
+    "title": "Filter by Time Period",
+    "description": "Explore your music by different time periods",
+    "lastWeek": "Last Week",
+    "lastMonth": "Last Month",
+    "sixMonths": "6 Months",
+    "allTime": "All Time",
+    "descriptions": {
+      "short_term": "Your top tracks from the past 7 days",
+      "medium_term": "Your top tracks from the past month",
+      "long_term": "Your top tracks from the past 6 months",
+      "all_time": "Your all-time favorite tracks"
+    }
+  },
+  "genre": {
+    "title": "Filter by Genre",
+    "description": "Explore your music by different genres and categories",
+    "allGenres": "All Genres",
+    "stats": {
+      "title": "Your Genre Breakdown",
+      "description": "Discover your musical preferences across different genres",
+      "differentGenres": "Different Genres",
+      "totalTracks": "Total Tracks",
+      "averageDistribution": "Average Distribution",
+      "diversityScore": "Diversity Score",
+      "topGenres": "Top Genres Distribution",
+      "musicalDiversity": "Musical Diversity",
+      "diversityLevels": {
+        "exceptional": "Exceptional",
+        "high": "High",
+        "moderate": "Moderate",
+        "low": "Low",
+        "veryLow": "Very Low"
+      },
+      "diversityMessages": {
+        "high": "You have a wonderfully varied taste in music!",
+        "low": "Try exploring new genres to increase your diversity!"
+      }
+    },
+    "categories": {
+      "turkish": "Turkish Music",
+      "pop": "Pop",
+      "rock": "Rock",
+      "hip-hop": "Hip-Hop & Rap",
+      "electronic": "Electronic",
+      "rnb-soul": "R&B & Soul",
+      "jazz": "Jazz",
+      "classical": "Classical",
+      "world": "World Music",
+      "alternative": "Alternative & Indie",
+      "other": "Other"
+    }
+  },
+  "tracks": {
+    "yourTopTracks": "Your Top Tracks",
+    "discoverMusic": "Discover your most played songs",
+    "playTrack": "Play Track",
+    "pauseTrack": "Pause Track",
+    "noTracks": "No tracks found",
+    "loadMore": "Load More",
+    "loading": "Loading tracks...",
+    "error": "Failed to load tracks. Please try again.",
+    "popularity": "Popularity",
+    "duration": "Duration",
+    "album": "Album",
+    "artist": "Artist",
+    "artists": "Artists",
+    "track": "Track",
+    "tracks": "tracks"
+  },
+  "quiz": {
+    "title": "Music Quiz",
+    "description": "Test your music knowledge with your top tracks",
+    "startQuiz": "Start Quiz",
+    "playAgain": "Play Again",
+    "ready": "Ready to test your music knowledge?",
+    "instructions": "Listen to 5-second snippets of your top tracks and guess the correct song!",
+    "score": "Score",
+    "question": "Question",
+    "total": "Total",
+    "playing": "Playing...",
+    "clickToPlay": "Click to play 5-second snippet",
+    "correct": "Correct!",
+    "wrong": "Wrong!",
+    "gameComplete": "Quiz Complete!",
+    "finalScore": "Final Score",
+    "scoreMessages": {
+      "perfect": "Perfect! You know your music!",
+      "excellent": "Excellent music knowledge!",
+      "good": "Good job! Keep listening!",
+      "keepExploring": "Keep exploring your music taste!"
+    },
+    "noPreview": "No preview available for this track!",
+    "needMoreTracks": "Need at least 4 tracks to start the quiz!",
+    "preparingQuiz": "Preparing your music quiz...",
+    "notEnoughTracks": "Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews."
+  },
+  "player": {
+    "play": "Play",
+    "pause": "Pause",
+    "previous": "Previous",
+    "next": "Next",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "shuffle": "Shuffle",
+    "repeat": "Repeat",
+    "noTrack": "No track selected",
+    "connecting": "Connecting to Spotify...",
+    "error": "Playback error occurred"
+  },
+  "comparison": {
+    "title": "Music Comparison",
+    "description": "Compare your music taste with other users",
+    "searchUsers": "Search Users",
+    "similarUsers": "Similar Users",
+    "compareWith": "Compare with",
+    "similarity": "Similarity",
+    "commonTracks": "Common Tracks",
+    "commonArtists": "Common Artists",
+    "commonGenres": "Common Genres",
+    "yourStats": "Your Stats",
+    "theirStats": "Their Stats",
+    "comparisonHistory": "Comparison History",
+    "leaderboard": "Similarity Leaderboard",
+    "noComparisons": "No comparisons yet",
+    "searchPlaceholder": "Search for users to compare...",
+    "privacyNotAllowed": "This user doesn't allow comparisons",
+    "cannotCompareYourself": "Cannot compare with yourself"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "privacy": "Privacy Settings",
+    "notifications": "Notifications",
+    "account": "Account",
+    "about": "About",
+    "version": "Version",
+    "support": "Support",
+    "feedback": "Feedback",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe"
+    },
+    "themes": {
+      "dark": "Dark",
+      "light": "Light",
+      "auto": "Auto"
+    },
+    "privacy": {
+      "allowComparison": "Allow others to compare with me",
+      "showProfile": "Show my profile publicly",
+      "showTopTracks": "Show my top tracks",
+      "showTopArtists": "Show my top artists"
+    },
+    "notifications": {
+      "email": "Email notifications",
+      "push": "Push notifications",
+      "friendRequests": "Friend requests",
+      "comparisons": "Comparison notifications"
+    }
+  },
+  "errors": {
+    "somethingWrong": "Oops! Something went wrong",
+    "tryAgain": "Please try again later",
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "notFound": "Page not found",
+    "unauthorized": "You are not authorized to access this page",
+    "forbidden": "Access forbidden",
+    "rateLimited": "Too many requests. Please wait a moment.",
+    "spotifyError": "Spotify API error. Please try again.",
+    "noData": "No data available",
+    "loadingFailed": "Failed to load data"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "and": "and",
+    "by": "by",
+    "version": "Version",
+    "lastUpdated": "Last updated",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact",
+    "github": "GitHub",
+    "support": "Support"
+  }
+}

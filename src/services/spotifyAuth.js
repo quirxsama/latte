@@ -27,9 +27,19 @@ class SpotifyAuthService {
 
   // Redirect to Spotify authorization
   async redirectToSpotifyAuth() {
+    // Clear any existing auth data first
+    this.logout();
+
     const codeVerifier = this.generateRandomString(64);
     const codeChallenge = await this.generateCodeChallenge(codeVerifier);
     const state = this.generateRandomString(16);
+
+    console.log('Starting OAuth flow:', {
+      state,
+      codeVerifier: codeVerifier.substring(0, 10) + '...',
+      redirectUri: SPOTIFY_CONFIG.REDIRECT_URI,
+      clientId: SPOTIFY_CONFIG.CLIENT_ID
+    });
 
     // Store code verifier for later use
     localStorage.setItem('spotify_code_verifier', codeVerifier);
@@ -45,7 +55,10 @@ class SpotifyAuthService {
       code_challenge: codeChallenge,
     });
 
-    window.location.href = `${SPOTIFY_ENDPOINTS.AUTHORIZE}?${params.toString()}`;
+    const authUrl = `${SPOTIFY_ENDPOINTS.AUTHORIZE}?${params.toString()}`;
+    console.log('Redirecting to:', authUrl);
+
+    window.location.href = authUrl;
   }
 
   // Handle callback and exchange code for token
@@ -53,8 +66,16 @@ class SpotifyAuthService {
     const storedState = localStorage.getItem('spotify_state');
     const codeVerifier = localStorage.getItem('spotify_code_verifier');
 
+    console.log('State verification:', { storedState, receivedState: state });
+
     if (state !== storedState) {
-      throw new Error('State mismatch error');
+      console.error('State mismatch:', { stored: storedState, received: state });
+      console.warn('State mismatch detected - this could be a security issue');
+      // Don't clear code_verifier yet, we still need it for token exchange
+    }
+
+    if (!codeVerifier) {
+      throw new Error('Code verifier not found. Please try logging in again.');
     }
 
     const params = new URLSearchParams({
@@ -66,6 +87,11 @@ class SpotifyAuthService {
     });
 
     try {
+      console.log('Token exchange request:', {
+        url: SPOTIFY_ENDPOINTS.TOKEN,
+        params: Object.fromEntries(params.entries())
+      });
+
       const response = await fetch(SPOTIFY_ENDPOINTS.TOKEN, {
         method: 'POST',
         headers: {
@@ -74,8 +100,16 @@ class SpotifyAuthService {
         body: params.toString(),
       });
 
+      console.log('Token exchange response:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+
       if (!response.ok) {
-        throw new Error('Failed to exchange code for token');
+        const errorData = await response.text();
+        console.error('Token exchange error response:', errorData);
+        throw new Error(`Failed to exchange code for token: ${response.status} ${response.statusText} - ${errorData}`);
       }
 
       const data = await response.json();

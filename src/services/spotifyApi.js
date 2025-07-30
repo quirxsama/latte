@@ -111,7 +111,18 @@ class SpotifyApiService {
 
   // Get user's top artists
   async getTopArtists(timeRange = 'medium_term', limit = 30, offset = 0) {
+    const cacheKey = `top_artists_${timeRange}_${limit}_${offset}`;
+
+    // Check cache first
+    const cachedData = this.cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
     try {
+      // Check rate limit
+      this.rateLimiter.makeRequest();
+
       const response = await this.api.get('/me/top/artists', {
         params: {
           time_range: timeRange,
@@ -119,10 +130,48 @@ class SpotifyApiService {
           offset: offset,
         },
       });
+
+      // Cache the response
+      this.cache.set(cacheKey, response.data);
+
       return response.data;
     } catch (error) {
       console.error('Error fetching top artists:', error);
       throw new Error('Failed to fetch top artists');
+    }
+  }
+
+  // Get multiple artists by IDs
+  async getArtists(artistIds) {
+    if (!artistIds || artistIds.length === 0) {
+      return { artists: [] };
+    }
+
+    const cacheKey = `artists_${artistIds.sort().join(',')}`;
+
+    // Check cache first
+    const cachedData = this.cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    try {
+      // Check rate limit
+      this.rateLimiter.makeRequest();
+
+      const response = await this.api.get('/artists', {
+        params: {
+          ids: artistIds.slice(0, 50).join(','), // Spotify API limit is 50
+        },
+      });
+
+      // Cache the response
+      this.cache.set(cacheKey, response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching artists:', error);
+      throw new Error('Failed to fetch artists');
     }
   }
 

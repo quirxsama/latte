@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { UI_CONFIG } from '../../constants/spotify';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from './Button';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const HeaderContainer = styled.header`
-  position: sticky;
+  position: static;
   top: 0;
   z-index: 100;
   background: rgba(25, 20, 20, 0.95);
@@ -315,11 +317,76 @@ const ButtonGroup = styled.div`
   }
 `;
 
+const AccountMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: ${UI_CONFIG.SPACING.SM};
+  background: rgba(25, 20, 20, 0.95);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  min-width: 200px;
+  opacity: ${props => props.isOpen ? 1 : 0};
+  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
+  transform: ${props => props.isOpen ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)'};
+  transition: all 0.3s ease;
+  transform-origin: top right;
+`;
+
+const AccountMenuItem = styled.div`
+  padding: ${UI_CONFIG.SPACING.MD};
+  color: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: ${UI_CONFIG.SPACING.SM};
+
+  &:first-child {
+    border-radius: 12px 12px 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 0 12px 12px;
+    border-bottom: none;
+  }
+
+  &:only-child {
+    border-radius: 12px;
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: ${UI_CONFIG.COLORS.WHITE};
+  }
+
+  &.danger {
+    color: #ff6b6b;
+
+    &:hover {
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff6b6b;
+    }
+  }
+`;
+
+const UserInfoContainer = styled.div`
+  position: relative;
+  cursor: pointer;
+`;
+
 const Header = () => {
   const { isAuthenticated, user, logout, login, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogoClick = () => {
     navigate('/');
@@ -337,6 +404,18 @@ const Header = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  // Close account menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isAccountMenuOpen && !event.target.closest('[data-account-menu]')) {
+        setIsAccountMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isAccountMenuOpen]);
 
   const getFollowerCount = () => {
     return user?.followers?.total || 0;
@@ -379,60 +458,82 @@ const Header = () => {
               className={isActivePage('/') ? 'active' : ''}
               onClick={() => handleNavigation('/')}
             >
-              Dashboard
+              {t('navigation.dashboard')}
             </NavItem>
             <NavItem
               className={isActivePage('/') ? 'active' : ''}
               onClick={() => handleNavigation('/')}
             >
-              Top Tracks
+              {t('navigation.topTracks')}
             </NavItem>
-            <NavItem
-              className={isActivePage('/quiz') ? 'active' : ''}
-              onClick={() => handleNavigation('/quiz')}
-            >
-              Quiz
-            </NavItem>
-            <NavItem>Compare</NavItem>
           </Navigation>
         )}
 
         <UserSection>
+          <LanguageSwitcher />
+
           {isAuthenticated && user ? (
             <>
-              <UserInfo>
-                {user.images && user.images.length > 0 ? (
-                  <UserAvatar
-                    src={user.images[0].url}
-                    alt={user.display_name || 'User'}
-                  />
-                ) : (
-                  <UserAvatar
-                    src="https://via.placeholder.com/44x44/1DB954/191414?text=U"
-                    alt="User"
-                  />
-                )}
-                <UserDetails>
-                  <UserName>
-                    {user.display_name || 'Spotify User'}
-                  </UserName>
-                  <UserStatus>
-                    {formatFollowerCount(getFollowerCount())} followers
-                  </UserStatus>
-                </UserDetails>
-              </UserInfo>
+              <UserInfoContainer
+                onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                data-account-menu
+              >
+                <UserInfo>
+                  {user.images && user.images.length > 0 ? (
+                    <UserAvatar
+                      src={user.images[0].url}
+                      alt={user.display_name || 'User'}
+                    />
+                  ) : (
+                    <UserAvatar
+                      src="https://via.placeholder.com/44x44/1DB954/191414?text=U"
+                      alt="User"
+                    />
+                  )}
+                  <UserDetails>
+                    <UserName>
+                      {user.display_name || 'Spotify User'}
+                    </UserName>
+                    <UserStatus>
+                      {formatFollowerCount(getFollowerCount())} followers
+                    </UserStatus>
+                  </UserDetails>
+                </UserInfo>
+
+                <AccountMenu isOpen={isAccountMenuOpen}>
+                  <AccountMenuItem onClick={() => {
+                    setIsAccountMenuOpen(false);
+                    // Navigate to profile settings
+                  }}>
+                    ⚙️ Account Settings
+                  </AccountMenuItem>
+                  <AccountMenuItem onClick={() => {
+                    setIsAccountMenuOpen(false);
+                    // Navigate to privacy settings
+                  }}>
+                    🔒 Privacy Settings
+                  </AccountMenuItem>
+                  <AccountMenuItem onClick={() => {
+                    setIsAccountMenuOpen(false);
+                    // Show about/help
+                  }}>
+                    ❓ Help & Support
+                  </AccountMenuItem>
+                  <AccountMenuItem
+                    className="danger"
+                    onClick={() => {
+                      setIsAccountMenuOpen(false);
+                      logout();
+                    }}
+                  >
+                    🚪 {t('navigation.logout')}
+                  </AccountMenuItem>
+                </AccountMenu>
+              </UserInfoContainer>
+
               <MobileMenuButton onClick={toggleMobileMenu}>
                 ☰
               </MobileMenuButton>
-              <ButtonGroup>
-                <Button
-                  variant="ghost"
-                  size="small"
-                  onClick={logout}
-                >
-                  Logout
-                </Button>
-              </ButtonGroup>
             </>
           ) : (
             <ButtonGroup>
@@ -441,7 +542,7 @@ const Header = () => {
                 size="small"
                 onClick={login}
               >
-                Login with Spotify
+                {t('navigation.login')}
               </Button>
             </ButtonGroup>
           )}
@@ -454,21 +555,14 @@ const Header = () => {
             className={isActivePage('/') ? 'active' : ''}
             onClick={() => handleNavigation('/')}
           >
-            🏠 Dashboard
+            🏠 {t('navigation.dashboard')}
           </MobileNavItem>
           <MobileNavItem
             className={isActivePage('/') ? 'active' : ''}
             onClick={() => handleNavigation('/')}
           >
-            🎵 Top Tracks
+            🎵 {t('navigation.topTracks')}
           </MobileNavItem>
-          <MobileNavItem
-            className={isActivePage('/quiz') ? 'active' : ''}
-            onClick={() => handleNavigation('/quiz')}
-          >
-            🎮 Quiz
-          </MobileNavItem>
-          <MobileNavItem>📊 Compare</MobileNavItem>
         </MobileMenu>
       )}
     </HeaderContainer>

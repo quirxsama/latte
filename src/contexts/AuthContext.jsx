@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import spotifyAuth from '../services/spotifyAuth';
 import spotifyApi from '../services/spotifyApi';
+import apiService from '../services/api';
 
 const AuthContext = createContext();
 
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
       setError(null);
 
       if (spotifyAuth.isAuthenticated()) {
-        // Try to fetch user profile to verify token is valid
+        // Try to fetch user profile from Spotify
         const userProfile = await spotifyApi.getUserProfile();
         setUser(userProfile);
         setIsAuthenticated(true);
@@ -65,11 +66,15 @@ export const AuthProvider = ({ children }) => {
       setError(null);
 
       await spotifyAuth.handleCallback(code, state);
-      
-      // Fetch user profile after successful authentication
-      const userProfile = await spotifyApi.getUserProfile();
-      setUser(userProfile);
+
+      // Fetch user profile from Spotify
+      const spotifyProfile = await spotifyApi.getUserProfile();
+
+      // For now, just use Spotify profile directly (no backend)
+      setUser(spotifyProfile);
       setIsAuthenticated(true);
+
+      console.log('✅ Authentication successful:', spotifyProfile.display_name);
 
       return true;
     } catch (error) {
@@ -89,6 +94,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setError(null);
   };
+
+
 
   const refreshAuth = async () => {
     try {

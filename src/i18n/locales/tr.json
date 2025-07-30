@@ -1,0 +1,235 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "retry": "Tekrar Dene",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "all": "Tümü",
+    "none": "Hiçbiri",
+    "yes": "Evet",
+    "no": "Hayır"
+  },
+  "navigation": {
+    "dashboard": "Ana Sayfa",
+    "topTracks": "En Çok Dinlenenler",
+    "quiz": "Müzik Yarışması",
+    "compare": "Karşılaştır",
+    "settings": "Ayarlar",
+    "logout": "Çıkış Yap",
+    "login": "Spotify ile Giriş Yap"
+  },
+  "auth": {
+    "welcome": "Latte Music'e Hoş Geldiniz",
+    "description": "En çok dinlediğiniz Spotify şarkılarınızı güzel 3D görselleştirmelerle keşfedin.",
+    "loginButton": "Spotify ile Bağlan",
+    "features": {
+      "topTracks": "En çok dinlediğiniz 30 şarkıyı görün",
+      "animations": "Güzel 3D kart animasyonları",
+      "player": "Müziği doğrudan tarayıcınızda çalın",
+      "responsive": "Tüm cihazlar için duyarlı tasarım"
+    },
+    "disclaimer": "Bağlanarak, Latte'nin Spotify dinleme verilerinize erişmesine izin vermiş olursunuz. Sadece en çok dinlediğiniz şarkıları ve temel profil bilgilerinizi okuyoruz.",
+    "authRequired": "Kimlik Doğrulama Gerekli",
+    "authRequiredMessage": "Bu özelliğe erişmek için lütfen Spotify hesabınızla giriş yapın.",
+    "authFailed": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin.",
+    "connecting": "Spotify'a bağlanıyor...",
+    "authenticating": "Spotify ile kimlik doğrulanıyor...",
+    "success": "Kimlik doğrulama başarılı! Yönlendiriliyor...",
+    "invalidClient": "Geçersiz istemci yapılandırması. Lütfen ayarlarınızı kontrol edin."
+  },
+  "timeRange": {
+    "title": "Zaman Aralığına Göre Filtrele",
+    "description": "Müziğinizi farklı zaman aralıklarına göre keşfedin",
+    "lastWeek": "Son Hafta",
+    "lastMonth": "Son Ay",
+    "sixMonths": "6 Ay",
+    "allTime": "Tüm Zamanlar",
+    "descriptions": {
+      "short_term": "Son 7 günün en çok dinlediğiniz şarkıları",
+      "medium_term": "Son ayın en çok dinlediğiniz şarkıları",
+      "long_term": "Son 6 ayın en çok dinlediğiniz şarkıları",
+      "all_time": "Tüm zamanların en sevdiğiniz şarkıları"
+    }
+  },
+  "genre": {
+    "title": "Türe Göre Filtrele",
+    "description": "Müziğinizi farklı türler ve kategorilere göre keşfedin",
+    "allGenres": "Tüm Türler",
+    "stats": {
+      "title": "Tür Dağılımınız",
+      "description": "Farklı türlerdeki müzik tercihlerinizi keşfedin",
+      "differentGenres": "Farklı Türler",
+      "totalTracks": "Toplam Şarkı",
+      "averageDistribution": "Ortalama Dağılım",
+      "diversityScore": "Çeşitlilik Puanı",
+      "topGenres": "En Çok Dinlenen Türler",
+      "musicalDiversity": "Müzikal Çeşitlilik",
+      "diversityLevels": {
+        "exceptional": "Olağanüstü",
+        "high": "Yüksek",
+        "moderate": "Orta",
+        "low": "Düşük",
+        "veryLow": "Çok Düşük"
+      },
+      "diversityMessages": {
+        "high": "Harika bir müzik zevkiniz var!",
+        "low": "Çeşitliliğinizi artırmak için yeni türleri keşfetmeyi deneyin!"
+      }
+    },
+    "categories": {
+      "turkish": "Türk Müziği",
+      "pop": "Pop",
+      "rock": "Rock",
+      "hip-hop": "Hip-Hop & Rap",
+      "electronic": "Elektronik",
+      "rnb-soul": "R&B & Soul",
+      "jazz": "Caz",
+      "classical": "Klasik",
+      "world": "Dünya Müziği",
+      "alternative": "Alternatif & Indie",
+      "other": "Diğer"
+    }
+  },
+  "tracks": {
+    "yourTopTracks": "En Çok Dinlediğiniz Şarkılar",
+    "discoverMusic": "En çok dinlediğiniz şarkıları keşfedin",
+    "playTrack": "Şarkıyı Çal",
+    "pauseTrack": "Şarkıyı Duraklat",
+    "noTracks": "Şarkı bulunamadı",
+    "loadMore": "Daha Fazla Yükle",
+    "loading": "Şarkılar yükleniyor...",
+    "error": "Şarkılar yüklenemedi. Lütfen tekrar deneyin.",
+    "popularity": "Popülerlik",
+    "duration": "Süre",
+    "album": "Albüm",
+    "artist": "Sanatçı",
+    "artists": "Sanatçılar",
+    "track": "Şarkı",
+    "tracks": "şarkı"
+  },
+  "quiz": {
+    "title": "Müzik Yarışması",
+    "description": "En çok dinlediğiniz şarkılarla müzik bilginizi test edin",
+    "startQuiz": "Yarışmayı Başlat",
+    "playAgain": "Tekrar Oyna",
+    "ready": "Müzik bilginizi test etmeye hazır mısınız?",
+    "instructions": "En çok dinlediğiniz şarkıların 5 saniyelik bölümlerini dinleyin ve doğru şarkıyı tahmin edin!",
+    "score": "Puan",
+    "question": "Soru",
+    "total": "Toplam",
+    "playing": "Çalıyor...",
+    "clickToPlay": "5 saniyelik bölümü çalmak için tıklayın",
+    "correct": "Doğru!",
+    "wrong": "Yanlış!",
+    "gameComplete": "Yarışma Tamamlandı!",
+    "finalScore": "Final Puanı",
+    "scoreMessages": {
+      "perfect": "Mükemmel! Müziğinizi çok iyi biliyorsunuz!",
+      "excellent": "Mükemmel müzik bilgisi!",
+      "good": "İyi iş! Dinlemeye devam edin!",
+      "keepExploring": "Müzik zevkinizi keşfetmeye devam edin!"
+    },
+    "noPreview": "Bu şarkı için önizleme mevcut değil!",
+    "needMoreTracks": "Yarışmayı başlatmak için en az 4 şarkı gerekli!",
+    "preparingQuiz": "Müzik yarışmanız hazırlanıyor...",
+    "notEnoughTracks": "Yarışma için yeterli önizlemeli şarkı yok. Ses önizlemeli en az 4 şarkıya ihtiyacınız var."
+  },
+  "player": {
+    "play": "Çal",
+    "pause": "Duraklat",
+    "previous": "Önceki",
+    "next": "Sonraki",
+    "volume": "Ses",
+    "mute": "Sessiz",
+    "unmute": "Sesi Aç",
+    "shuffle": "Karıştır",
+    "repeat": "Tekrarla",
+    "noTrack": "Şarkı seçilmedi",
+    "connecting": "Spotify'a bağlanıyor...",
+    "error": "Çalma hatası oluştu"
+  },
+  "comparison": {
+    "title": "Müzik Karşılaştırması",
+    "description": "Müzik zevkinizi diğer kullanıcılarla karşılaştırın",
+    "searchUsers": "Kullanıcı Ara",
+    "similarUsers": "Benzer Kullanıcılar",
+    "compareWith": "Karşılaştır",
+    "similarity": "Benzerlik",
+    "commonTracks": "Ortak Şarkılar",
+    "commonArtists": "Ortak Sanatçılar",
+    "commonGenres": "Ortak Türler",
+    "yourStats": "Sizin İstatistikleriniz",
+    "theirStats": "Onların İstatistikleri",
+    "comparisonHistory": "Karşılaştırma Geçmişi",
+    "leaderboard": "Benzerlik Sıralaması",
+    "noComparisons": "Henüz karşılaştırma yok",
+    "searchPlaceholder": "Karşılaştırmak için kullanıcı arayın...",
+    "privacyNotAllowed": "Bu kullanıcı karşılaştırmalara izin vermiyor",
+    "cannotCompareYourself": "Kendinizle karşılaştırma yapamazsınız"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "language": "Dil",
+    "theme": "Tema",
+    "privacy": "Gizlilik Ayarları",
+    "notifications": "Bildirimler",
+    "account": "Hesap",
+    "about": "Hakkında",
+    "version": "Sürüm",
+    "support": "Destek",
+    "feedback": "Geri Bildirim",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe"
+    },
+    "themes": {
+      "dark": "Koyu",
+      "light": "Açık",
+      "auto": "Otomatik"
+    },
+    "privacy": {
+      "allowComparison": "Diğerlerinin benimle karşılaştırma yapmasına izin ver",
+      "showProfile": "Profilimi herkese açık göster",
+      "showTopTracks": "En çok dinlediğim şarkıları göster",
+      "showTopArtists": "En çok dinlediğim sanatçıları göster"
+    },
+    "notifications": {
+      "email": "E-posta bildirimleri",
+      "push": "Push bildirimleri",
+      "friendRequests": "Arkadaşlık istekleri",
+      "comparisons": "Karşılaştırma bildirimleri"
+    }
+  },
+  "errors": {
+    "somethingWrong": "Hay aksi! Bir şeyler ters gitti",
+    "tryAgain": "Lütfen daha sonra tekrar deneyin",
+    "networkError": "Ağ hatası. Lütfen bağlantınızı kontrol edin.",
+    "serverError": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
+    "notFound": "Sayfa bulunamadı",
+    "unauthorized": "Bu sayfaya erişim yetkiniz yok",
+    "forbidden": "Erişim yasak",
+    "rateLimited": "Çok fazla istek. Lütfen bir dakika bekleyin.",
+    "spotifyError": "Spotify API hatası. Lütfen tekrar deneyin.",
+    "noData": "Veri mevcut değil",
+    "loadingFailed": "Veri yüklenemedi"
+  },
+  "footer": {
+    "madeWith": "ile yapıldı",
+    "and": "ve",
+    "by": "tarafından",
+    "version": "Sürüm",
+    "lastUpdated": "Son güncelleme",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Şartları",
+    "contact": "İletişim",
+    "github": "GitHub",
+    "support": "Destek"
+  }
+}

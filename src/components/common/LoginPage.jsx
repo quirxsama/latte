@@ -158,6 +158,16 @@ const LoginPage = () => {
     login();
   };
 
+  const clearStorage = () => {
+    localStorage.removeItem('spotify_state');
+    localStorage.removeItem('spotify_code_verifier');
+    localStorage.removeItem('spotify_access_token');
+    localStorage.removeItem('spotify_refresh_token');
+    localStorage.removeItem('latte_auth_token');
+    console.log('LocalStorage cleared');
+    alert('LocalStorage cleared! You can now try logging in again.');
+  };
+
   if (loading) {
     return (
       <LoginContainer>
@@ -204,9 +214,20 @@ const LoginPage = () => {
         </LoginButton>
 
         <Disclaimer>
-          By connecting, you agree to let Latte access your Spotify listening data. 
+          By connecting, you agree to let Latte access your Spotify listening data.
           We only read your top tracks and basic profile information.
         </Disclaimer>
+
+        {process.env.NODE_ENV === 'development' && (
+          <Button
+            variant="ghost"
+            size="small"
+            onClick={clearStorage}
+            style={{ marginTop: '1rem', fontSize: '0.8rem', opacity: 0.7 }}
+          >
+            🔧 Clear Storage (Debug)
+          </Button>
+        )}
       </LoginCard>
     </LoginContainer>
   );

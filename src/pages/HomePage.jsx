@@ -5,9 +5,11 @@ import { useAuth } from '../contexts/AuthContext';
 import spotifyApi from '../services/spotifyApi';
 import Header from '../components/common/Header';
 import TimeRangeFilter from '../components/common/TimeRangeFilter';
+import GenreFilter from '../components/genre/GenreFilter';
+import GenreStats from '../components/genre/GenreStats';
 import TrackList from '../components/track/TrackList';
-import MusicPlayer from '../components/player/MusicPlayer';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { categorizeGenres, getGenreStats, filterTracksByGenre } from '../utils/genreCategories';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -53,10 +55,14 @@ const HomePage = () => {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [currentTrack, setCurrentTrack] = useState(null);
+
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [selectedTimeRange, setSelectedTimeRange] = useState('medium_term');
+  const [selectedGenre, setSelectedGenre] = useState(null);
+  const [genreStats, setGenreStats] = useState([]);
+  const [allGenres, setAllGenres] = useState([]);
+  const [filteredTracks, setFilteredTracks] = useState([]);
 
   // Fetch top tracks with time range support
   const fetchTopTracks = async (timeRange = selectedTimeRange, offset = 0, limit = 30) => {
@@ -78,8 +84,12 @@ const HomePage = () => {
 
       if (offset === 0) {
         setTracks(response.items);
+        // Process genres when getting new tracks
+        processGenres(response.items);
       } else {
-        setTracks(prev => [...prev, ...response.items]);
+        const newTracks = [...tracks, ...response.items];
+        setTracks(newTracks);
+        processGenres(newTracks);
       }
 
       // Check if there are more tracks available
@@ -94,6 +104,16 @@ const HomePage = () => {
     }
   };
 
+  // Filter tracks by genre
+  useEffect(() => {
+    if (selectedGenre) {
+      const filtered = filterTracksByGenre(tracks, selectedGenre);
+      setFilteredTracks(filtered);
+    } else {
+      setFilteredTracks(tracks);
+    }
+  }, [tracks, selectedGenre]);
+
   // Load tracks when authenticated or time range changes
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
@@ -101,16 +121,66 @@ const HomePage = () => {
     }
   }, [isAuthenticated, authLoading, selectedTimeRange]);
 
-  // Handle track play
-  const handleTrackPlay = (track) => {
-    setCurrentTrack(track);
-    // The actual playback will be handled by the MusicPlayer component
+
+
+  // Process genres from tracks
+  const processGenres = async (trackList) => {
+    try {
+      // Get detailed artist info for better genre data
+      const artistIds = [...new Set(
+        trackList.flatMap(track => track.artists.map(artist => artist.id))
+      )];
+
+      // Fetch artists in batches of 50 (Spotify API limit)
+      const artistDetails = [];
+      for (let i = 0; i < artistIds.length; i += 50) {
+        const batch = artistIds.slice(i, i + 50);
+        const response = await spotifyApi.getArtists(batch);
+        artistDetails.push(...response.artists);
+      }
+
+      // Create artist lookup map
+      const artistMap = {};
+      artistDetails.forEach(artist => {
+        artistMap[artist.id] = artist;
+      });
+
+      // Enrich tracks with artist genre data
+      const enrichedTracks = trackList.map(track => ({
+        ...track,
+        artists: track.artists.map(artist => ({
+          ...artist,
+          genres: artistMap[artist.id]?.genres || []
+        }))
+      }));
+
+      // Update tracks with enriched data
+      setTracks(enrichedTracks);
+
+      // Extract all genres
+      const allTrackGenres = artistDetails.flatMap(artist => artist.genres || []);
+      setAllGenres(allTrackGenres);
+
+      // Categorize genres
+      const categorizedGenres = categorizeGenres(allTrackGenres);
+      const stats = getGenreStats(categorizedGenres);
+      setGenreStats(stats);
+
+    } catch (error) {
+      console.error('Error processing genres:', error);
+    }
   };
 
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange) => {
     setSelectedTimeRange(newTimeRange);
+    setSelectedGenre(null); // Reset genre filter
     setCurrentTrack(null); // Reset current track when changing time range
+  };
+
+  // Handle genre filter change
+  const handleGenreChange = (genreId) => {
+    setSelectedGenre(genreId);
   };
 
   // Handle load more tracks
@@ -189,23 +259,44 @@ const HomePage = () => {
               onRangeChange={handleTimeRangeChange}
               showDescription={true}
             />
+
+            {genreStats.length > 0 && (
+              <>
+                <GenreStats
+                  genreStats={genreStats}
+                  totalTracks={tracks.length}
+                  allGenres={allGenres}
+                />
+                <GenreFilter
+                  selectedGenre={selectedGenre}
+                  onGenreChange={handleGenreChange}
+                  genreStats={genreStats}
+                  totalTracks={tracks.length}
+                />
+              </>
+            )}
+
             <TrackList
-              tracks={tracks}
+              tracks={filteredTracks}
               loading={loading}
               error={error}
-              onTrackPlay={handleTrackPlay}
-              currentTrack={currentTrack}
-              title={getTimeRangeTitle()}
-              subtitle={getTimeRangeSubtitle()}
-              onLoadMore={handleLoadMore}
-              hasMore={hasMore}
+              title={selectedGenre ?
+                `${genreStats.find(g => g.id === selectedGenre)?.name || 'Genre'} - ${getTimeRangeTitle()}` :
+                getTimeRangeTitle()
+              }
+              subtitle={selectedGenre ?
+                `${filteredTracks.length} tracks in this genre` :
+                getTimeRangeSubtitle()
+              }
+              onLoadMore={selectedGenre ? null : handleLoadMore}
+              hasMore={selectedGenre ? false : hasMore}
               loadingMore={loadingMore}
             />
           </>
         )}
       </MainContent>
 
-      <MusicPlayer />
+
     </PageContainer>
   );
 };

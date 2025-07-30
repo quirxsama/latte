@@ -2,7 +2,9 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { UI_CONFIG } from '../../constants/spotify';
 
-const StyledButton = styled.button`
+const StyledButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'size', 'loading', 'fullWidth'].includes(prop),
+})`
   display: inline-flex;
   align-items: center;
   justify-content: center;

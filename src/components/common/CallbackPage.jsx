@@ -65,15 +65,21 @@ const CallbackPage = () => {
   const { handleCallback } = useAuth();
   const [status, setStatus] = useState('processing'); // processing, success, error
   const [message, setMessage] = useState('');
+  const [processed, setProcessed] = useState(false);
 
   useEffect(() => {
     const processCallback = async () => {
+      // Prevent duplicate processing
+      if (processed) return;
+      setProcessed(true);
       try {
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         const state = urlParams.get('state');
         const error = urlParams.get('error');
+
+        console.log('Callback URL params:', { code: !!code, state, error });
 
         if (error) {
           setStatus('error');
@@ -108,6 +114,14 @@ const CallbackPage = () => {
         console.error('Callback processing error:', error);
         setStatus('error');
         setMessage('An unexpected error occurred during authentication.');
+
+        // Clear any stored auth data on error
+        localStorage.removeItem('spotify_state');
+        localStorage.removeItem('spotify_code_verifier');
+        localStorage.removeItem('spotify_access_token');
+        localStorage.removeItem('spotify_refresh_token');
+        localStorage.removeItem('latte_auth_token');
+
         setTimeout(() => navigate('/'), 3000);
       }
     };
