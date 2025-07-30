@@ -71,6 +71,125 @@ export const MAIN_GENRES = {
       'hip hop turkish'
     ]
   },
+  ACOUSTIC: {
+    id: 'acoustic',
+    name: 'Acoustic',
+    icon: '🎸',
+    color: '#d4a574',
+    subGenres: ['acoustic', 'singer-songwriter', 'folk acoustic', 'unplugged']
+  },
+  AFROBEAT: {
+    id: 'afrobeat',
+    name: 'Afrobeat',
+    icon: '🥁',
+    color: '#ff6b35',
+    subGenres: ['afrobeat', 'afro-pop', 'african']
+  },
+  BLUES: {
+    id: 'blues',
+    name: 'Blues',
+    icon: '🎺',
+    color: '#4a90e2',
+    subGenres: ['blues', 'chicago blues', 'delta blues', 'electric blues']
+  },
+  BOSSANOVA: {
+    id: 'bossanova',
+    name: 'Bossa Nova',
+    icon: '🌴',
+    color: '#f39c12',
+    subGenres: ['bossanova', 'bossa nova', 'brazilian']
+  },
+  COUNTRY: {
+    id: 'country',
+    name: 'Country',
+    icon: '🤠',
+    color: '#8b4513',
+    subGenres: ['country', 'bluegrass', 'americana', 'alt-country']
+  },
+  DISCO: {
+    id: 'disco',
+    name: 'Disco',
+    icon: '🕺',
+    color: '#ff69b4',
+    subGenres: ['disco', 'funk', 'nu-disco', 'boogie']
+  },
+  DRUM_AND_BASS: {
+    id: 'drum-and-bass',
+    name: 'Drum & Bass',
+    icon: '🥁',
+    color: '#00ff00',
+    subGenres: ['drum-and-bass', 'dnb', 'jungle', 'liquid-dnb']
+  },
+  DUB: {
+    id: 'dub',
+    name: 'Dub',
+    icon: '🔊',
+    color: '#32cd32',
+    subGenres: ['dub', 'dubstep', 'dub-techno']
+  },
+  GOSPEL: {
+    id: 'gospel',
+    name: 'Gospel',
+    icon: '⛪',
+    color: '#ffd700',
+    subGenres: ['gospel', 'contemporary gospel', 'southern gospel']
+  },
+  GRUNGE: {
+    id: 'grunge',
+    name: 'Grunge',
+    icon: '🎸',
+    color: '#696969',
+    subGenres: ['grunge', 'alternative rock', 'post-grunge']
+  },
+  INDIE: {
+    id: 'indie',
+    name: 'Indie',
+    icon: '🎭',
+    color: '#ff6347',
+    subGenres: ['indie', 'indie-pop', 'indie-rock', 'indie-folk']
+  },
+  LATIN: {
+    id: 'latin',
+    name: 'Latin',
+    icon: '💃',
+    color: '#ff4500',
+    subGenres: ['latin', 'salsa', 'reggaeton', 'bachata', 'merengue']
+  },
+  METAL: {
+    id: 'metal',
+    name: 'Metal',
+    icon: '🤘',
+    color: '#000000',
+    subGenres: ['metal', 'heavy-metal', 'death-metal', 'black-metal']
+  },
+  PUNK: {
+    id: 'punk',
+    name: 'Punk',
+    icon: '🔥',
+    color: '#dc143c',
+    subGenres: ['punk', 'punk-rock', 'hardcore', 'pop-punk']
+  },
+  REGGAE: {
+    id: 'reggae',
+    name: 'Reggae',
+    icon: '🇯🇲',
+    color: '#228b22',
+    subGenres: ['reggae', 'dancehall', 'ska', 'rocksteady']
+  },
+  SOUL: {
+    id: 'soul',
+    name: 'Soul',
+    icon: '💫',
+    color: '#9370db',
+    subGenres: ['soul', 'motown', 'northern soul', 'southern soul']
+  },
+  TANGO: {
+    id: 'tango',
+    name: 'Tango',
+    icon: '💃',
+    color: '#8b0000',
+    subGenres: ['tango', 'nuevo tango', 'tango argentino']
+  },
   POP: {
     id: 'pop',
     name: 'Pop',
@@ -261,15 +380,17 @@ export const GENRE_KEYWORDS = {
   alternative: ['alternative', 'indie', 'experimental', 'post-punk', 'shoegaze', 'lo-fi']
 };
 
-// Categorize a single genre
+// Categorize a single genre and return the best match
 export const categorizeGenre = (genre) => {
   if (!genre || typeof genre !== 'string') return null;
-  
+
   const lowerGenre = genre.toLowerCase();
-  
+  let bestMatch = null;
+  let bestConfidence = 0;
+
   // Check each main genre
   for (const [categoryId, category] of Object.entries(MAIN_GENRES)) {
-    // Check if genre is in subGenres list
+    // Check if genre is in subGenres list (highest priority)
     if (category.subGenres.some(subGenre => lowerGenre.includes(subGenre.toLowerCase()))) {
       return {
         mainGenre: category,
@@ -277,24 +398,28 @@ export const categorizeGenre = (genre) => {
         confidence: 1.0
       };
     }
-    
-    // Check keywords
+
+    // Check keywords (lower priority)
     const keywords = GENRE_KEYWORDS[categoryId] || [];
-    const matchingKeywords = keywords.filter(keyword => 
+    const matchingKeywords = keywords.filter(keyword =>
       lowerGenre.includes(keyword.toLowerCase())
     );
-    
+
     if (matchingKeywords.length > 0) {
-      return {
-        mainGenre: category,
-        originalGenre: genre,
-        confidence: matchingKeywords.length / keywords.length
-      };
+      const confidence = matchingKeywords.length / keywords.length;
+      if (confidence > bestConfidence) {
+        bestMatch = {
+          mainGenre: category,
+          originalGenre: genre,
+          confidence
+        };
+        bestConfidence = confidence;
+      }
     }
   }
-  
-  // If no match found, return as uncategorized
-  return {
+
+  // Return best match or uncategorized
+  return bestMatch || {
     mainGenre: {
       id: 'other',
       name: 'Other',
@@ -306,6 +431,19 @@ export const categorizeGenre = (genre) => {
   };
 };
 
+// Get the primary genre for a track (most confident match)
+export const getPrimaryGenre = (genres) => {
+  if (!Array.isArray(genres) || genres.length === 0) return null;
+
+  const categorizedGenres = genres.map(genre => categorizeGenre(genre)).filter(Boolean);
+
+  if (categorizedGenres.length === 0) return null;
+
+  // Sort by confidence and return the best match
+  categorizedGenres.sort((a, b) => b.confidence - a.confidence);
+  return categorizedGenres[0];
+};
+
 // Categorize multiple genres
 export const categorizeGenres = (genres) => {
   if (!Array.isArray(genres)) return [];
@@ -313,10 +451,66 @@ export const categorizeGenres = (genres) => {
   return genres.map(genre => categorizeGenre(genre)).filter(Boolean);
 };
 
-// Get genre statistics
+// Get genre statistics from tracks
+export const getGenreStatsFromTracks = (tracks) => {
+  const stats = {};
+  const totalTracks = tracks.length;
+
+  console.log(`Processing ${totalTracks} tracks for genre stats`);
+
+  tracks.forEach((track, index) => {
+    if (!track.artists) return;
+
+    // Get all genres from all artists of the track
+    const trackGenres = track.artists.reduce((genres, artist) => {
+      if (artist.genres && Array.isArray(artist.genres)) {
+        return [...genres, ...artist.genres];
+      }
+      return genres;
+    }, []);
+
+    // Get primary genre for this track
+    const primaryGenre = getPrimaryGenre(trackGenres);
+
+    if (primaryGenre) {
+      const genreId = primaryGenre.mainGenre.id;
+
+      if (index < 3) { // Debug first 3 tracks
+        console.log(`Track "${track.name}" -> Primary genre: ${primaryGenre.mainGenre.name} (${genreId})`);
+      }
+
+      if (!stats[genreId]) {
+        stats[genreId] = {
+          ...primaryGenre.mainGenre,
+          count: 0,
+          totalConfidence: 0
+        };
+      }
+
+      stats[genreId].count += 1;
+      stats[genreId].totalConfidence += primaryGenre.confidence;
+    } else if (index < 3) {
+      console.log(`Track "${track.name}" -> No primary genre found, genres:`, trackGenres);
+    }
+  });
+
+  // Calculate averages and percentages
+  const genreStats = Object.values(stats).map(stat => ({
+    ...stat,
+    percentage: Math.round((stat.count / totalTracks) * 100),
+    averageConfidence: Math.round((stat.totalConfidence / stat.count) * 100) / 100
+  }));
+
+  console.log('Final genre stats:', genreStats.map(s => `${s.name}: ${s.count} tracks`));
+
+  // Sort by count (most popular first)
+  return genreStats.sort((a, b) => b.count - a.count);
+};
+
+// Legacy function for backward compatibility
 export const getGenreStats = (categorizedGenres) => {
   const stats = {};
-  
+
   categorizedGenres.forEach(({ mainGenre, confidence }) => {
     if (!stats[mainGenre.id]) {
       stats[mainGenre.id] = {
@@ -326,11 +520,11 @@ export const getGenreStats = (categorizedGenres) => {
         genres: []
       };
     }
-    
+
     stats[mainGenre.id].count += 1;
     stats[mainGenre.id].totalConfidence += confidence;
   });
-  
+
   // Calculate averages and percentages
   const totalGenres = categorizedGenres.length;
   const genreStats = Object.values(stats).map(stat => ({
@@ -338,7 +532,7 @@ export const getGenreStats = (categorizedGenres) => {
     percentage: Math.round((stat.count / totalGenres) * 100),
     averageConfidence: Math.round((stat.totalConfidence / stat.count) * 100) / 100
   }));
-  
+
   // Sort by count (most popular first)
   return genreStats.sort((a, b) => b.count - a.count);
 };
@@ -375,13 +569,13 @@ const getRecommendationReason = (recommendedGenre, userGenres) => {
   return reasons[recommendedGenre.id] || 'Broaden your musical taste';
 };
 
-// Filter tracks by genre category
+// Filter tracks by genre category using primary genre only
 export const filterTracksByGenre = (tracks, genreCategory) => {
   if (!tracks || !Array.isArray(tracks)) return [];
-  
+
   return tracks.filter(track => {
     if (!track.artists) return false;
-    
+
     // Get all genres from all artists of the track
     const trackGenres = track.artists.reduce((genres, artist) => {
       if (artist.genres && Array.isArray(artist.genres)) {
@@ -389,14 +583,12 @@ export const filterTracksByGenre = (tracks, genreCategory) => {
       }
       return genres;
     }, []);
-    
-    // Categorize track genres
-    const categorizedGenres = categorizeGenres(trackGenres);
-    
-    // Check if any genre matches the requested category
-    return categorizedGenres.some(({ mainGenre }) => 
-      mainGenre.id === genreCategory
-    );
+
+    // Get primary genre for this track
+    const primaryGenre = getPrimaryGenre(trackGenres);
+
+    // Check if primary genre matches the requested category
+    return primaryGenre && primaryGenre.mainGenre.id === genreCategory;
   });
 };
 

@@ -46,7 +46,55 @@ const userSchema = new mongoose.Schema({
     showTopArtists: {
       type: Boolean,
       default: false
+    },
+    allowFriendRequests: {
+      type: Boolean,
+      default: true
     }
+  },
+
+  // Friends system
+  friends: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now
+    },
+    status: {
+      type: String,
+      enum: ['accepted', 'blocked'],
+      default: 'accepted'
+    }
+  }],
+
+  // Friend requests
+  friendRequests: {
+    sent: [{
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      sentAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    received: [{
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      receivedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }]
   },
 
   // Music statistics

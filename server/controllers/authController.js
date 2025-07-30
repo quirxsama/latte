@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const sqliteDB = require('../config/sqlite');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT token
@@ -27,41 +27,38 @@ const spotifyAuth = async (req, res) => {
     }
 
     // Check if user already exists
-    let user = await User.findOne({ spotifyId });
+    let user = sqliteDB.getUserBySpotifyId(spotifyId);
 
     if (user) {
       // Update existing user data
-      user.email = email;
-      user.displayName = displayName;
-      user.profileImage = profileImage;
-      user.country = country;
-      user.followers = followers?.total || 0;
-      user.lastLogin = new Date();
-      
-      await user.save();
-    } else {
-      // Create new user
-      user = new User({
-        spotifyId,
+      user = sqliteDB.updateUser(user.id, {
         email,
         displayName,
         profileImage,
         country,
         followers: followers?.total || 0,
-        lastLogin: new Date()
+        lastLogin: new Date().toISOString()
       });
-      
-      await user.save();
+    } else {
+      // Create new user
+      user = sqliteDB.createUser({
+        spotifyId,
+        email,
+        displayName,
+        profileImage,
+        country,
+        followers: followers?.total || 0
+      });
     }
 
     // Generate JWT token
-    const token = generateToken(user._id);
+    const token = generateToken(user.id);
 
     res.json({
       success: true,
       token,
       user: {
-        id: user._id,
+        id: user.id,
         spotifyId: user.spotifyId,
         email: user.email,
         displayName: user.displayName,
@@ -87,8 +84,8 @@ const spotifyAuth = async (req, res) => {
 // Get current user profile
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select('-__v');
-    
+    const user = sqliteDB.getUserById(req.userId);
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -96,7 +93,7 @@ const getProfile = async (req, res) => {
     res.json({
       success: true,
       user: {
-        id: user._id,
+        id: user.id,
         spotifyId: user.spotifyId,
         email: user.email,
         displayName: user.displayName,
@@ -135,11 +132,7 @@ const updateProfile = async (req, res) => {
       }
     });
 
-    const user = await User.findByIdAndUpdate(
-      req.userId,
-      { $set: filteredUpdates },
-      { new: true, runValidators: true }
-    ).select('-__v');
+    const user = sqliteDB.updateUser(req.userId, filteredUpdates);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -149,7 +142,7 @@ const updateProfile = async (req, res) => {
       success: true,
       message: 'Profile updated successfully',
       user: {
-        id: user._id,
+        id: user.id,
         displayName: user.displayName,
         privacy: user.privacy,
         settings: user.settings
@@ -170,40 +163,45 @@ const updateMusicStats = async (req, res) => {
   try {
     const { topTracks, topArtists, topGenres } = req.body;
 
-    const user = await User.findById(req.userId);
+    const user = sqliteDB.getUserById(req.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update music stats
+    // Prepare music stats update
+    const musicStats = user.musicStats || {};
+
     if (topTracks) {
-      user.musicStats.topTracks = topTracks.map(track => ({
+      musicStats.topTracks = topTracks.map(track => ({
         spotifyId: track.id,
         name: track.name,
         artists: track.artists.map(a => a.name),
         playCount: track.popularity || 0,
         timeRange: req.body.timeRange || 'medium_term',
-        lastUpdated: new Date()
+        lastUpdated: new Date().toISOString()
       }));
     }
 
     if (topArtists) {
-      user.musicStats.topArtists = topArtists.map(artist => ({
+      musicStats.topArtists = topArtists.map(artist => ({
         spotifyId: artist.id,
         name: artist.name,
         genres: artist.genres || [],
         playCount: artist.popularity || 0,
         timeRange: req.body.timeRange || 'medium_term',
-        lastUpdated: new Date()
+        lastUpdated: new Date().toISOString()
       }));
     }
 
     if (topGenres) {
-      user.musicStats.topGenres = topGenres;
+      musicStats.topGenres = topGenres;
     }
 
-    user.lastDataUpdate = new Date();
-    await user.save();
+    // Update user with new music stats
+    sqliteDB.updateUser(req.userId, {
+      musicStats,
+      lastDataUpdate: new Date().toISOString()
+    });
 
     res.json({
       success: true,

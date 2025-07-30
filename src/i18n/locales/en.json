@@ -112,7 +112,9 @@
     "artist": "Artist",
     "artists": "Artists",
     "track": "Track",
-    "tracks": "tracks"
+    "tracks": "tracks",
+    "openInSpotify": "Open in Spotify",
+    "playOnSpotify": "Play on Spotify"
   },
   "quiz": {
     "title": "Music Quiz",

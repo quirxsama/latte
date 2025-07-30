@@ -129,11 +129,13 @@ const LanguageSwitcher = ({ className }) => {
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   const handleLanguageChange = (languageCode) => {
+    console.log('Changing language to:', languageCode);
     i18n.changeLanguage(languageCode);
     setIsOpen(false);
-    
+
     // Save to localStorage
     localStorage.setItem('latte_language', languageCode);
+    console.log('Language changed, current language:', i18n.language);
   };
 
   const toggleDropdown = () => {

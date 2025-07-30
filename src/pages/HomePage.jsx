@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { UI_CONFIG } from '../constants/spotify';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,23 +10,27 @@ import GenreFilter from '../components/genre/GenreFilter';
 import GenreStats from '../components/genre/GenreStats';
 import TrackList from '../components/track/TrackList';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { categorizeGenres, getGenreStats, filterTracksByGenre } from '../utils/genreCategories';
+import Footer from '../components/common/Footer';
+import { categorizeGenres, getGenreStats, getGenreStatsFromTracks, filterTracksByGenre } from '../utils/genreCategories';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
   background: linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_BLACK} 0%, ${UI_CONFIG.COLORS.SPOTIFY_DARK_GRAY} 100%);
-  padding-bottom: 120px; /* Space for player */
   display: flex;
   flex-direction: column;
-  align-items: center;
 `;
 
 const MainContent = styled.main`
-  padding-top: ${UI_CONFIG.SPACING.XL};
+  flex: 1;
+  padding: ${UI_CONFIG.SPACING.XL} ${UI_CONFIG.SPACING.LG};
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+
+  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
+    padding: ${UI_CONFIG.SPACING.LG} ${UI_CONFIG.SPACING.MD};
+  }
 `;
 
 const ErrorContainer = styled.div`
@@ -52,6 +57,7 @@ const ErrorMessage = styled.p`
 
 const HomePage = () => {
   const { isAuthenticated, user, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -89,6 +95,7 @@ const HomePage = () => {
       } else {
         const newTracks = [...tracks, ...response.items];
         setTracks(newTracks);
+        // Process genres for all tracks (including new ones)
         processGenres(newTracks);
       }
 
@@ -157,13 +164,13 @@ const HomePage = () => {
       // Update tracks with enriched data
       setTracks(enrichedTracks);
 
-      // Extract all genres
+      // Extract all genres for reference
       const allTrackGenres = artistDetails.flatMap(artist => artist.genres || []);
       setAllGenres(allTrackGenres);
 
-      // Categorize genres
-      const categorizedGenres = categorizeGenres(allTrackGenres);
-      const stats = getGenreStats(categorizedGenres);
+      // Calculate genre stats from tracks using primary genre system
+      const stats = getGenreStatsFromTracks(enrichedTracks);
+      console.log('Genre stats calculated:', stats);
       setGenreStats(stats);
 
     } catch (error) {
@@ -175,7 +182,6 @@ const HomePage = () => {
   const handleTimeRangeChange = (newTimeRange) => {
     setSelectedTimeRange(newTimeRange);
     setSelectedGenre(null); // Reset genre filter
-    setCurrentTrack(null); // Reset current track when changing time range
   };
 
   // Handle genre filter change
@@ -193,23 +199,23 @@ const HomePage = () => {
   // Get time range display info
   const getTimeRangeTitle = () => {
     const timeRangeMap = {
-      'short_term': 'Last Week',
-      'medium_term': 'Last Month',
-      'long_term': 'Last 6 Months',
-      'all_time': 'All Time Favorites'
+      'short_term': t('timeRange.lastWeek'),
+      'medium_term': t('timeRange.lastMonth'),
+      'long_term': t('timeRange.sixMonths'),
+      'all_time': t('timeRange.allTime')
     };
-    return timeRangeMap[selectedTimeRange] || 'Your Top Tracks';
+    return timeRangeMap[selectedTimeRange] || t('tracks.yourTopTracks');
   };
 
   const getTimeRangeSubtitle = () => {
     const baseText = user?.display_name ? `, ${user.display_name}` : '';
     const timeRangeMap = {
-      'short_term': `Your most played songs from the past week${baseText}`,
-      'medium_term': `Your most played songs from the past month${baseText}`,
-      'long_term': `Your most played songs from the past 6 months${baseText}`,
-      'all_time': `Your all-time favorite tracks${baseText}`
+      'short_term': `${t('timeRange.descriptions.short_term')}${baseText}`,
+      'medium_term': `${t('timeRange.descriptions.medium_term')}${baseText}`,
+      'long_term': `${t('timeRange.descriptions.long_term')}${baseText}`,
+      'all_time': `${t('timeRange.descriptions.all_time')}${baseText}`
     };
-    return timeRangeMap[selectedTimeRange] || `Discover your musical taste${baseText}`;
+    return timeRangeMap[selectedTimeRange] || `${t('tracks.discoverMusic')}${baseText}`;
   };
 
   // Show loading spinner during initial auth check
@@ -288,15 +294,15 @@ const HomePage = () => {
                 `${filteredTracks.length} tracks in this genre` :
                 getTimeRangeSubtitle()
               }
-              onLoadMore={selectedGenre ? null : handleLoadMore}
-              hasMore={selectedGenre ? false : hasMore}
+              onLoadMore={handleLoadMore}
+              hasMore={hasMore}
               loadingMore={loadingMore}
             />
           </>
         )}
       </MainContent>
 
-
+      <Footer />
     </PageContainer>
   );
 };

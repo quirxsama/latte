@@ -1,16 +1,13 @@
-const mongoose = require('mongoose');
+const sqliteDB = require('./sqlite');
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/latte-music', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log('🔄 Switching to SQLite database...');
+    sqliteDB.connect();
+    console.log('🎉 Database ready for use!');
   } catch (error) {
-    console.error('Database connection error:', error);
-    process.exit(1);
+    console.error('❌ Database connection failed:', error.message);
+    console.log('📝 Note: Server will continue without database. Some features will not work.');
   }
 };
 

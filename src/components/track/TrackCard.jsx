@@ -202,8 +202,6 @@ const formatDuration = (ms) => {
 
 const TrackCard = ({
   track,
-  onPlay,
-  isPlaying = false,
   className,
   animationDelay = 0
 }) => {
@@ -226,15 +224,17 @@ const TrackCard = ({
   }, [animationDelay]);
 
   const handleCardClick = () => {
-    if (onPlay) {
-      onPlay(track);
+    // Open Spotify track in new tab
+    if (track.external_urls?.spotify) {
+      window.open(track.external_urls.spotify, '_blank');
     }
   };
 
   const handlePlayClick = (e) => {
     e.stopPropagation();
-    if (onPlay) {
-      onPlay(track);
+    // Open Spotify track in new tab
+    if (track.external_urls?.spotify) {
+      window.open(track.external_urls.spotify, '_blank');
     }
   };
 

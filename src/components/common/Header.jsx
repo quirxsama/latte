@@ -14,8 +14,16 @@ const HeaderContainer = styled.header`
   background: rgba(25, 20, 20, 0.95);
   backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(29, 185, 84, 0.2);
-  padding: ${UI_CONFIG.SPACING.LG} 0;
+  padding: ${UI_CONFIG.SPACING.LG} ${UI_CONFIG.SPACING.XL};
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 24px 24px;
+  margin: 0 ${UI_CONFIG.SPACING.MD};
+
+  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
+    margin: 0;
+    border-radius: 0;
+    padding: ${UI_CONFIG.SPACING.MD};
+  }
   transition: all 0.3s ease;
 
   &:hover {
@@ -25,17 +33,13 @@ const HeaderContainer = styled.header`
 `;
 
 const HeaderContent = styled.div`
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 ${UI_CONFIG.SPACING.LG};
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   gap: ${UI_CONFIG.SPACING.LG};
 
   @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
-    padding: 0 ${UI_CONFIG.SPACING.MD};
-    flex-direction: column;
     gap: ${UI_CONFIG.SPACING.MD};
   }
 `;
@@ -104,51 +108,7 @@ const LogoIcon = styled.div`
   }
 `;
 
-const Navigation = styled.nav`
-  display: flex;
-  align-items: center;
-  gap: ${UI_CONFIG.SPACING.LG};
 
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.TABLET}) {
-    display: none;
-  }
-`;
-
-const NavItem = styled.button`
-  background: none;
-  border: none;
-  color: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: ${UI_CONFIG.SPACING.SM} ${UI_CONFIG.SPACING.MD};
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  position: relative;
-
-  &:hover {
-    color: ${UI_CONFIG.COLORS.WHITE};
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-1px);
-  }
-
-  &.active {
-    color: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
-    background: rgba(29, 185, 84, 0.1);
-  }
-
-  &.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 2px;
-    background: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
-    border-radius: 1px;
-  }
-`;
 
 const UserSection = styled.div`
   display: flex;
@@ -380,6 +340,8 @@ const UserInfoContainer = styled.div`
   cursor: pointer;
 `;
 
+
+
 const Header = () => {
   const { isAuthenticated, user, logout, login, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -452,22 +414,7 @@ const Header = () => {
           Latte
         </Logo>
 
-        {isAuthenticated && (
-          <Navigation>
-            <NavItem
-              className={isActivePage('/') ? 'active' : ''}
-              onClick={() => handleNavigation('/')}
-            >
-              {t('navigation.dashboard')}
-            </NavItem>
-            <NavItem
-              className={isActivePage('/') ? 'active' : ''}
-              onClick={() => handleNavigation('/')}
-            >
-              {t('navigation.topTracks')}
-            </NavItem>
-          </Navigation>
-        )}
+
 
         <UserSection>
           <LanguageSwitcher />

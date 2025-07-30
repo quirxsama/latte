@@ -112,7 +112,9 @@
     "artist": "Sanatçı",
     "artists": "Sanatçılar",
     "track": "Şarkı",
-    "tracks": "şarkı"
+    "tracks": "şarkı",
+    "openInSpotify": "Spotify'da Aç",
+    "playOnSpotify": "Spotify'da Çal"
   },
   "quiz": {
     "title": "Müzik Yarışması",
