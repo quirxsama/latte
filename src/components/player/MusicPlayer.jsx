@@ -9,9 +9,9 @@ const PlayerContainer = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(25, 20, 20, 0.95);
+  background: var(--color-background-secondary);
   backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--color-border);
   padding: ${UI_CONFIG.SPACING.MD};
   z-index: 1000;
   transform: translateY(${props => props.isVisible ? '0' : '100%'});

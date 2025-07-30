@@ -1,12 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/GlobalStyles';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import LoginPage from './components/common/LoginPage';
 import CallbackPage from './components/common/CallbackPage';
 import HomePage from './pages/HomePage';
 import QuizPage from './pages/QuizPage';
+import LandingPage from './pages/LandingPage';
 import LoadingSpinner from './components/common/LoadingSpinner';
 
 // Protected Route Component
@@ -34,9 +36,10 @@ const PublicRoute = ({ children }) => {
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <GlobalStyles />
-        <Router>
+      <ThemeProvider>
+        <AuthProvider>
+          <GlobalStyles />
+          <Router>
           <Routes>
             <Route
               path="/login"
@@ -52,6 +55,10 @@ function App() {
             />
             <Route
               path="/"
+              element={<LandingPage />}
+            />
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <HomePage />
@@ -72,7 +79,8 @@ function App() {
             />
           </Routes>
         </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

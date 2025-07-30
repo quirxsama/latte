@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { UI_CONFIG } from '../../constants/spotify';
 
 const FooterContainer = styled.footer`
-  background: rgba(25, 20, 20, 0.95);
+  background: var(--color-background-secondary);
   backdrop-filter: blur(15px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--color-border);
   padding: ${UI_CONFIG.SPACING.LG} 0;
   width: 100%;
   margin-top: auto;
@@ -107,7 +107,7 @@ const Footer = () => {
       <FooterContent>
         <div>
           <FooterText>
-            © 2024 Latte Music • Made with ❤️ for music lovers
+            © 2024 Latte Music • {t('footer.madeWith')} ❤️ {t('footer.by')} quirxsama
           </FooterText>
         </div>
 

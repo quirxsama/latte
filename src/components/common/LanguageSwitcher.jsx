@@ -50,11 +50,11 @@ const DropdownMenu = styled.div`
   top: 100%;
   right: 0;
   margin-top: ${UI_CONFIG.SPACING.XS};
-  background: rgba(25, 20, 20, 0.95);
+  background: var(--color-background-secondary);
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-large);
   z-index: 1000;
   min-width: 120px;
   opacity: ${props => props.isOpen ? 1 : 0};
@@ -68,14 +68,14 @@ const LanguageOption = styled.button`
   width: 100%;
   background: none;
   border: none;
-  padding: ${UI_CONFIG.SPACING.SM} ${UI_CONFIG.SPACING.MD};
-  color: ${props => props.active ? UI_CONFIG.COLORS.SPOTIFY_GREEN : UI_CONFIG.COLORS.WHITE};
+  padding: 8px 16px;
+  color: ${props => props.active ? 'var(--color-primary)' : 'var(--color-text)'};
   font-size: 0.9rem;
   font-weight: ${props => props.active ? 600 : 500};
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: ${UI_CONFIG.SPACING.SM};
+  gap: 8px;
   transition: all 0.3s ease;
   text-align: left;
 
@@ -92,8 +92,8 @@ const LanguageOption = styled.button`
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
+    background: var(--color-surface-hover);
+    color: var(--color-primary);
   }
 
   .flag {
@@ -102,7 +102,7 @@ const LanguageOption = styled.button`
 
   .check {
     margin-left: auto;
-    color: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
+    color: var(--color-primary);
     font-size: 0.8rem;
   }
 `;

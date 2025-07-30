@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { UI_CONFIG } from '../../constants/spotify';
 import { MAIN_GENRES } from '../../utils/genreCategories';
 
@@ -105,26 +106,27 @@ const GenreCount = styled.div`
 `;
 
 const AllGenresCard = styled(GenreCard)`
-  background: ${props => props.active ? 
-    `linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_GREEN}22, ${UI_CONFIG.COLORS.SPOTIFY_GREEN}11)` : 
-    'rgba(255, 255, 255, 0.05)'
+  background: ${props => props.active ?
+    'var(--color-surface-active)' :
+    'var(--color-surface)'
   };
-  border-color: ${props => props.active ? UI_CONFIG.COLORS.SPOTIFY_GREEN : 'rgba(255, 255, 255, 0.1)'};
+  border-color: ${props => props.active ? 'var(--color-primary)' : 'var(--color-border)'};
 
   &:hover {
-    border-color: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
-    background: linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_GREEN}33, ${UI_CONFIG.COLORS.SPOTIFY_GREEN}11);
-    box-shadow: 0 8px 25px ${UI_CONFIG.COLORS.SPOTIFY_GREEN}22;
+    border-color: var(--color-primary);
+    background: var(--color-surface-hover);
+    box-shadow: var(--shadow-glow);
   }
 `;
 
-const GenreFilter = ({ 
-  selectedGenre = null, 
-  onGenreChange, 
+const GenreFilter = ({
+  selectedGenre = null,
+  onGenreChange,
   genreStats = [],
-  totalTracks = 0 
+  totalTracks = 0
 }) => {
   const [hoveredGenre, setHoveredGenre] = useState(null);
+  const { t } = useTranslation();
 
   const handleGenreSelect = (genreId) => {
     const newGenre = genreId === selectedGenre ? null : genreId;
@@ -146,9 +148,9 @@ const GenreFilter = ({
   return (
     <FilterContainer>
       <FilterHeader>
-        <FilterTitle>🎵 Filter by Genre</FilterTitle>
+        <FilterTitle>🎵 {t('genre.filterByGenre')}</FilterTitle>
         <FilterDescription>
-          Explore your music by different genres and categories
+          {t('genre.description')}
         </FilterDescription>
       </FilterHeader>
 
@@ -161,11 +163,11 @@ const GenreFilter = ({
           onMouseLeave={() => setHoveredGenre(null)}
         >
           <GenreIcon active={selectedGenre === null}>🎶</GenreIcon>
-          <GenreName 
+          <GenreName
             active={selectedGenre === null}
             color={UI_CONFIG.COLORS.SPOTIFY_GREEN}
           >
-            All Genres
+            {t('genre.allGenres')}
           </GenreName>
           <GenreCount 
             active={selectedGenre === null}

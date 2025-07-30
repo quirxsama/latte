@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { UI_CONFIG } from '../../constants/spotify';
 import Button from './Button';
 
 const ErrorContainer = styled.div`
@@ -9,47 +8,47 @@ const ErrorContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  padding: ${UI_CONFIG.SPACING.XL};
+  padding: 32px;
   text-align: center;
   background: rgba(255, 71, 87, 0.05);
   border: 1px solid rgba(255, 71, 87, 0.2);
   border-radius: 16px;
-  margin: ${UI_CONFIG.SPACING.XL};
+  margin: 32px;
 `;
 
 const ErrorIcon = styled.div`
   font-size: 4rem;
-  margin-bottom: ${UI_CONFIG.SPACING.LG};
+  margin-bottom: 24px;
   opacity: 0.7;
 `;
 
 const ErrorTitle = styled.h2`
   color: #ff4757;
-  margin-bottom: ${UI_CONFIG.SPACING.MD};
+  margin-bottom: 16px;
   font-size: 1.5rem;
 `;
 
 const ErrorMessage = styled.p`
-  color: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
+  color: #b3b3b3;
   font-size: 1rem;
   line-height: 1.6;
   max-width: 500px;
-  margin-bottom: ${UI_CONFIG.SPACING.XL};
+  margin-bottom: 32px;
 `;
 
 const ErrorDetails = styled.details`
-  margin-top: ${UI_CONFIG.SPACING.MD};
+  margin-top: 16px;
   max-width: 600px;
   width: 100%;
-  
+
   summary {
-    color: ${UI_CONFIG.COLORS.SPOTIFY_GRAY};
+    color: #6b6b6b;
     cursor: pointer;
     font-size: 0.9rem;
-    margin-bottom: ${UI_CONFIG.SPACING.SM};
-    
+    margin-bottom: 8px;
+
     &:hover {
-      color: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
+      color: #b3b3b3;
     }
   }
 `;
@@ -57,9 +56,9 @@ const ErrorDetails = styled.details`
 const ErrorStack = styled.pre`
   background: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
-  padding: ${UI_CONFIG.SPACING.MD};
+  padding: 16px;
   font-size: 0.8rem;
-  color: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
+  color: #b3b3b3;
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
@@ -134,7 +133,7 @@ class ErrorBoundary extends React.Component {
             You can try refreshing the page or going back to the previous page.
           </ErrorMessage>
           
-          <div style={{ display: 'flex', gap: UI_CONFIG.SPACING.MD, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Button 
               variant="primary" 
               onClick={this.handleRetry}

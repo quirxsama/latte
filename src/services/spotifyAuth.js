@@ -42,8 +42,27 @@ class SpotifyAuthService {
     });
 
     // Store code verifier for later use
+    console.log('💾 Storing auth data in localStorage:', {
+      codeVerifier: codeVerifier.substring(0, 10) + '...',
+      state,
+      timestamp: new Date().toISOString()
+    });
+
+    // Use both localStorage and sessionStorage for redundancy
     localStorage.setItem('spotify_code_verifier', codeVerifier);
     localStorage.setItem('spotify_state', state);
+    localStorage.setItem('spotify_auth_timestamp', Date.now().toString());
+
+    // Backup in sessionStorage
+    sessionStorage.setItem('spotify_code_verifier_backup', codeVerifier);
+    sessionStorage.setItem('spotify_state_backup', state);
+
+    // Verify storage
+    console.log('✅ Verification - stored values:', {
+      storedCodeVerifier: localStorage.getItem('spotify_code_verifier')?.substring(0, 10) + '...',
+      storedState: localStorage.getItem('spotify_state'),
+      storedTimestamp: localStorage.getItem('spotify_auth_timestamp')
+    });
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -63,8 +82,26 @@ class SpotifyAuthService {
 
   // Handle callback and exchange code for token
   async handleCallback(code, state) {
+    console.log('🔄 Starting callback handling...');
+    console.log('📥 Received parameters:', { code: code?.substring(0, 10) + '...', state });
+
     const storedState = localStorage.getItem('spotify_state');
-    const codeVerifier = localStorage.getItem('spotify_code_verifier');
+    let codeVerifier = localStorage.getItem('spotify_code_verifier');
+
+    // If not found in localStorage, try sessionStorage backup
+    if (!codeVerifier) {
+      console.log('⚠️ Code verifier not found in localStorage, checking sessionStorage backup...');
+      codeVerifier = sessionStorage.getItem('spotify_code_verifier_backup');
+      if (codeVerifier) {
+        console.log('✅ Found code verifier in sessionStorage backup');
+      }
+    }
+
+    console.log('💾 LocalStorage contents:', {
+      storedState,
+      codeVerifier: codeVerifier ? codeVerifier.substring(0, 10) + '...' : null,
+      allKeys: Object.keys(localStorage).filter(key => key.startsWith('spotify_'))
+    });
 
     console.log('State verification:', { storedState, receivedState: state });
 
@@ -75,8 +112,12 @@ class SpotifyAuthService {
     }
 
     if (!codeVerifier) {
+      console.error('❌ Code verifier not found in localStorage');
+      console.log('🔍 Available localStorage keys:', Object.keys(localStorage));
       throw new Error('Code verifier not found. Please try logging in again.');
     }
+
+    console.log('✅ Code verifier found, proceeding with token exchange...');
 
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
@@ -118,6 +159,13 @@ class SpotifyAuthService {
       // Clean up stored values
       localStorage.removeItem('spotify_code_verifier');
       localStorage.removeItem('spotify_state');
+      localStorage.removeItem('spotify_auth_timestamp');
+
+      // Clean up sessionStorage backups
+      sessionStorage.removeItem('spotify_code_verifier_backup');
+      sessionStorage.removeItem('spotify_state_backup');
+
+      console.log('🧹 Cleaned up auth storage after successful token exchange');
 
       return data;
     } catch (error) {
@@ -204,6 +252,13 @@ class SpotifyAuthService {
     localStorage.removeItem('spotify_access_token');
     localStorage.removeItem('spotify_refresh_token');
     localStorage.removeItem('spotify_token_expiry');
+    localStorage.removeItem('spotify_code_verifier');
+    localStorage.removeItem('spotify_state');
+    localStorage.removeItem('spotify_auth_timestamp');
+
+    // Clean up sessionStorage backups
+    sessionStorage.removeItem('spotify_code_verifier_backup');
+    sessionStorage.removeItem('spotify_state_backup');
   }
 
   // Check if user is authenticated

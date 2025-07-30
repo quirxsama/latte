@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { UI_CONFIG } from '../../constants/spotify';
 import { getGenreDiversityScore } from '../../utils/genreCategories';
 
@@ -199,10 +200,11 @@ const DiversityDescription = styled.p`
 `;
 
 const GenreStats = ({ genreStats = [], totalTracks = 0, allGenres = [] }) => {
+  const { t } = useTranslation();
   const diversityScore = getGenreDiversityScore(allGenres);
   const topGenres = genreStats.slice(0, 5);
   const totalGenres = genreStats.length;
-  const averagePercentage = totalGenres > 0 ? 
+  const averagePercentage = totalGenres > 0 ?
     Math.round(genreStats.reduce((sum, g) => sum + g.percentage, 0) / totalGenres) : 0;
 
   const getDiversityLevel = (score) => {
@@ -219,9 +221,9 @@ const GenreStats = ({ genreStats = [], totalTracks = 0, allGenres = [] }) => {
     return (
       <StatsContainer>
         <StatsHeader>
-          <StatsTitle>🎵 Genre Statistics</StatsTitle>
+          <StatsTitle>🎵 {t('genre.stats.title')}</StatsTitle>
           <StatsDescription>
-            No genre data available. Listen to more music to see your genre breakdown!
+            {t('genre.stats.noGenreData')}
           </StatsDescription>
         </StatsHeader>
       </StatsContainer>
@@ -231,9 +233,9 @@ const GenreStats = ({ genreStats = [], totalTracks = 0, allGenres = [] }) => {
   return (
     <StatsContainer>
       <StatsHeader>
-        <StatsTitle>🎵 Your Genre Breakdown</StatsTitle>
+        <StatsTitle>🎵 {t('genre.yourGenreBreakdown')}</StatsTitle>
         <StatsDescription>
-          Discover your musical preferences across different genres
+          {t('genre.stats.description')}
         </StatsDescription>
       </StatsHeader>
 

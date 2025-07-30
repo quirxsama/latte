@@ -1,34 +1,44 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { UI_CONFIG } from '../../constants/spotify';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from './Button';
 import LoadingSpinner from './LoadingSpinner';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const LoginContainer = styled.div`
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_BLACK} 0%, ${UI_CONFIG.COLORS.SPOTIFY_DARK_GRAY} 100%);
-  padding: ${UI_CONFIG.SPACING.MD};
+  background: var(--color-gradient-primary);
+  padding: 16px;
 `;
 
 const LoginCard = styled.div`
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   border-radius: 24px;
-  padding: ${UI_CONFIG.SPACING.XXL};
+  padding: 48px;
   text-align: center;
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-large);
+  position: relative;
 
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
-    padding: ${UI_CONFIG.SPACING.XL};
+  @media (max-width: 768px) {
+    padding: 32px;
     border-radius: 16px;
   }
+`;
+
+const LanguageSwitcherContainer = styled.div`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
 `;
 
 const Logo = styled.div`
@@ -153,6 +163,17 @@ const ErrorMessage = styled.div`
 
 const LoginPage = () => {
   const { login, loading, error } = useAuth();
+  const { t, i18n } = useTranslation();
+
+  // Auto-detect language on mount
+  useEffect(() => {
+    const browserLang = navigator.language.split('-')[0];
+    if (browserLang === 'tr' && i18n.language !== 'tr') {
+      i18n.changeLanguage('tr');
+    } else if (browserLang === 'en' && i18n.language !== 'en') {
+      i18n.changeLanguage('en');
+    }
+  }, [i18n]);
 
   const handleLogin = () => {
     login();
@@ -171,9 +192,9 @@ const LoginPage = () => {
   if (loading) {
     return (
       <LoginContainer>
-        <LoadingSpinner 
-          size="large" 
-          text="Connecting to Spotify..." 
+        <LoadingSpinner
+          size="large"
+          text={t('login.connecting')}
         />
       </LoginContainer>
     );
@@ -182,21 +203,25 @@ const LoginPage = () => {
   return (
     <LoginContainer>
       <LoginCard>
+        {/* Language Switcher */}
+        <LanguageSwitcherContainer>
+          <LanguageSwitcher />
+        </LanguageSwitcherContainer>
+
         <Logo>
           <LogoIcon>L</LogoIcon>
           <LogoText>Latte</LogoText>
         </Logo>
 
-        <Title>Welcome to Latte Music</Title>
+        <Title>{t('login.title')}</Title>
         <Description>
-          Discover your musical taste with beautiful 3D visualizations of your top Spotify tracks.
+          {t('login.description')}
         </Description>
 
         <Features>
-          <Feature>View your top 30 most played tracks</Feature>
-          <Feature>Beautiful 3D card animations</Feature>
-          <Feature>Play music directly in your browser</Feature>
-          <Feature>Responsive design for all devices</Feature>
+          <Feature>{t('login.features.topTracks')}</Feature>
+          <Feature>{t('login.features.analytics')}</Feature>
+          <Feature>{t('login.features.responsive')}</Feature>
         </Features>
 
         {error && (
@@ -210,12 +235,11 @@ const LoginPage = () => {
           onClick={handleLogin}
           disabled={loading}
         >
-          Connect with Spotify
+          {t('login.connectButton')}
         </LoginButton>
 
         <Disclaimer>
-          By connecting, you agree to let Latte access your Spotify listening data.
-          We only read your top tracks and basic profile information.
+          {t('login.disclaimer')}
         </Disclaimer>
 
         {process.env.NODE_ENV === 'development' && (
@@ -225,7 +249,7 @@ const LoginPage = () => {
             onClick={clearStorage}
             style={{ marginTop: '1rem', fontSize: '0.8rem', opacity: 0.7 }}
           >
-            🔧 Clear Storage (Debug)
+            🔧 {t('login.clearStorage')}
           </Button>
         )}
       </LoginCard>

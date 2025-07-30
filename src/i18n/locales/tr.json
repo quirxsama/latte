@@ -51,6 +51,9 @@
     "lastMonth": "Son Ay",
     "sixMonths": "6 Ay",
     "allTime": "Tüm Zamanlar",
+    "short_term": "Son hafta",
+    "medium_term": "Son ay",
+    "long_term": "Son 6 ay",
     "descriptions": {
       "short_term": "Son 7 günün en çok dinlediğiniz şarkıları",
       "medium_term": "Son ayın en çok dinlediğiniz şarkıları",
@@ -62,6 +65,8 @@
     "title": "Türe Göre Filtrele",
     "description": "Müziğinizi farklı türler ve kategorilere göre keşfedin",
     "allGenres": "Tüm Türler",
+    "filterByGenre": "Türe göre filtrele",
+    "yourGenreBreakdown": "Tür dağılımınız",
     "stats": {
       "title": "Tür Dağılımınız",
       "description": "Farklı türlerdeki müzik tercihlerinizi keşfedin",
@@ -81,7 +86,8 @@
       "diversityMessages": {
         "high": "Harika bir müzik zevkiniz var!",
         "low": "Çeşitliliğinizi artırmak için yeni türleri keşfetmeyi deneyin!"
-      }
+      },
+      "noGenreData": "Henüz tür verisi yok. Tür dağılımınızı görmek için daha fazla müzik dinleyin!"
     },
     "categories": {
       "turkish": "Türk Müziği",
@@ -115,6 +121,59 @@
     "tracks": "şarkı",
     "openInSpotify": "Spotify'da Aç",
     "playOnSpotify": "Spotify'da Çal"
+  },
+  "stats": {
+    "title": "Müzik İstatistikleriniz",
+    "loading": "İstatistikler yükleniyor...",
+    "error": "İstatistikler yüklenemedi",
+    "totalTracks": "Toplam Şarkı",
+    "totalArtists": "Toplam Sanatçı",
+    "totalGenres": "Toplam Tür",
+    "averagePopularity": "Ortalama Popülerlik",
+    "mostPlayedGenre": "En Çok Dinlenen Tür",
+    "diversityScore": "Çeşitlilik Puanı",
+    "listeningHabits": "Dinleme Alışkanlıkları",
+    "genreDistribution": "Tür Dağılımı",
+    "timeRangeStats": "Zaman Aralığı İstatistikleri",
+    "noData": "Henüz veri yok",
+    "percentage": "Yüzde",
+    "count": "Adet"
+  },
+  "login": {
+    "title": "Latte Music'e Hoş Geldiniz",
+    "description": "En çok dinlediğiniz Spotify şarkılarınızın güzel 3D görselleştirmeleri ile müzik zevkinizi keşfedin.",
+    "connectButton": "Spotify ile Bağlan",
+    "connecting": "Spotify'a bağlanıyor...",
+    "redirecting": "Yönlendiriliyor...",
+    "disclaimer": "Bağlanarak, Latte'nin Spotify dinleme verilerinize erişmesine izin vermiş olursunuz. Sadece en çok dinlediğiniz şarkıları ve temel profil bilgilerinizi okuyoruz.",
+    "features": {
+      "topTracks": "En çok dinlediğiniz şarkıları görüntüleyin",
+      "analytics": "Müzik zevkinizi analiz edin",
+      "responsive": "Tüm cihazlar için duyarlı tasarım"
+    },
+    "clearStorage": "Depolamayı Temizle (Hata Ayıklama)"
+  },
+  "landing": {
+    "hero": {
+      "title": "Müzik Zevkinizi Keşfedin",
+      "subtitle": "Spotify'daki en çok dinlediğiniz şarkılarınızın güzel 3D görselleştirmeleri ile müzikal yolculuğunuzu keşfedin.",
+      "cta": "Hemen Başlayın"
+    },
+    "features": {
+      "title": "Neler Sunuyoruz",
+      "topTracks": {
+        "title": "En Çok Dinlenen Şarkılar",
+        "description": "En çok dinlediğiniz şarkıları güzel kartlarla görüntüleyin ve keşfedin."
+      },
+      "analytics": {
+        "title": "Müzik Analizi",
+        "description": "Dinleme alışkanlıklarınızı ve müzik zevkinizi detaylı analiz edin."
+      },
+      "responsive": {
+        "title": "Duyarlı Tasarım",
+        "description": "Tüm cihazlarda mükemmel çalışan, mobil uyumlu modern tasarım."
+      }
+    }
   },
   "quiz": {
     "title": "Müzik Yarışması",
@@ -180,8 +239,8 @@
     "title": "Ayarlar",
     "language": "Dil",
     "theme": "Tema",
-    "privacy": "Gizlilik Ayarları",
-    "notifications": "Bildirimler",
+    "privacyTitle": "Gizlilik Ayarları",
+    "notificationsTitle": "Bildirimler",
     "account": "Hesap",
     "about": "Hakkında",
     "version": "Sürüm",
@@ -232,6 +291,7 @@
     "terms": "Kullanım Şartları",
     "contact": "İletişim",
     "github": "GitHub",
-    "support": "Destek"
+    "support": "Destek",
+    "projectRepo": "Proje Deposu"
   }
 }

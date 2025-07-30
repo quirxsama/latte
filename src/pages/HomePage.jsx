@@ -16,7 +16,7 @@ import { categorizeGenres, getGenreStats, getGenreStatsFromTracks, filterTracksB
 const PageContainer = styled.div`
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_BLACK} 0%, ${UI_CONFIG.COLORS.SPOTIFY_DARK_GRAY} 100%);
+  background: var(--color-gradient-primary);
   display: flex;
   flex-direction: column;
 `;

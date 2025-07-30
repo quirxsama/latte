@@ -14,13 +14,45 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    background: linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_BLACK} 0%, ${UI_CONFIG.COLORS.SPOTIFY_DARK_GRAY} 100%);
-    color: ${UI_CONFIG.COLORS.WHITE};
+    font-family: 'Inter', 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    background: var(--color-gradient-primary);
+    color: var(--color-text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Theme-specific styles */
+  .theme-dark {
+    color-scheme: dark;
+  }
+
+  .theme-light {
+    color-scheme: light;
+  }
+
+  /* Force override any brown/coffee colors */
+  * {
+    /* Remove any brown background colors */
+    &[style*="background-color: #8B4513"],
+    &[style*="background-color: #A0522D"],
+    &[style*="background-color: #CD853F"],
+    &[style*="background-color: #D2691E"],
+    &[style*="background-color: #DEB887"],
+    &[style*="background-color: #F4A460"],
+    &[style*="background-color: #D2B48C"],
+    &[style*="background: #8B4513"],
+    &[style*="background: #A0522D"],
+    &[style*="background: #CD853F"],
+    &[style*="background: #D2691E"],
+    &[style*="background: #DEB887"],
+    &[style*="background: #F4A460"],
+    &[style*="background: #D2B48C"] {
+      background-color: var(--color-background-secondary) !important;
+      background: var(--color-background-secondary) !important;
+    }
   }
 
   #root {
@@ -38,22 +70,22 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   ::-webkit-scrollbar-track {
-    background: ${UI_CONFIG.COLORS.SPOTIFY_DARK_GRAY};
+    background: var(--color-background-secondary);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: ${UI_CONFIG.COLORS.SPOTIFY_GRAY};
+    background: var(--color-text-muted);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
+    background: var(--color-text-secondary);
   }
 
   /* Focus styles */
   button:focus,
   a:focus {
-    outline: 2px solid ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 
@@ -129,7 +161,7 @@ export const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 ${UI_CONFIG.SPACING.MD};
-  
+
   @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
     padding: 0 ${UI_CONFIG.SPACING.SM};
   }
@@ -151,7 +183,7 @@ export const Grid = styled.div`
   display: grid;
   gap: ${props => props.gap || UI_CONFIG.SPACING.MD};
   grid-template-columns: ${props => props.columns || 'repeat(auto-fit, minmax(300px, 1fr))'};
-  
+
   @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
     grid-template-columns: 1fr;
     gap: ${UI_CONFIG.SPACING.SM};

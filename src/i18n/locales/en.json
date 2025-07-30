@@ -51,6 +51,9 @@
     "lastMonth": "Last Month",
     "sixMonths": "6 Months",
     "allTime": "All Time",
+    "short_term": "Last week",
+    "medium_term": "Last month",
+    "long_term": "All time",
     "descriptions": {
       "short_term": "Your top tracks from the past 7 days",
       "medium_term": "Your top tracks from the past month",
@@ -62,6 +65,8 @@
     "title": "Filter by Genre",
     "description": "Explore your music by different genres and categories",
     "allGenres": "All Genres",
+    "filterByGenre": "Filter by genre",
+    "yourGenreBreakdown": "Your genre breakdown",
     "stats": {
       "title": "Your Genre Breakdown",
       "description": "Discover your musical preferences across different genres",
@@ -81,7 +86,8 @@
       "diversityMessages": {
         "high": "You have a wonderfully varied taste in music!",
         "low": "Try exploring new genres to increase your diversity!"
-      }
+      },
+      "noGenreData": "No genre data available. Listen to more music to see your genre breakdown!"
     },
     "categories": {
       "turkish": "Turkish Music",
@@ -115,6 +121,59 @@
     "tracks": "tracks",
     "openInSpotify": "Open in Spotify",
     "playOnSpotify": "Play on Spotify"
+  },
+  "stats": {
+    "title": "Your Music Statistics",
+    "loading": "Loading statistics...",
+    "error": "Failed to load statistics",
+    "totalTracks": "Total Tracks",
+    "totalArtists": "Total Artists",
+    "totalGenres": "Total Genres",
+    "averagePopularity": "Average Popularity",
+    "mostPlayedGenre": "Most Played Genre",
+    "diversityScore": "Diversity Score",
+    "listeningHabits": "Listening Habits",
+    "genreDistribution": "Genre Distribution",
+    "timeRangeStats": "Time Range Statistics",
+    "noData": "No data yet",
+    "percentage": "Percentage",
+    "count": "Count"
+  },
+  "login": {
+    "title": "Welcome to Latte Music",
+    "description": "Discover your musical taste with beautiful 3D visualizations of your top Spotify tracks.",
+    "connectButton": "Connect with Spotify",
+    "connecting": "Connecting to Spotify...",
+    "redirecting": "Redirecting...",
+    "disclaimer": "By connecting, you agree to let Latte access your Spotify listening data. We only read your top tracks and basic profile information.",
+    "features": {
+      "topTracks": "View your most played tracks",
+      "analytics": "Analyze your musical taste",
+      "responsive": "Responsive design for all devices"
+    },
+    "clearStorage": "Clear Storage (Debug)"
+  },
+  "landing": {
+    "hero": {
+      "title": "Discover Your Musical Taste",
+      "subtitle": "Explore your musical journey with beautiful 3D visualizations of your most played tracks on Spotify.",
+      "cta": "Get Started"
+    },
+    "features": {
+      "title": "What We Offer",
+      "topTracks": {
+        "title": "Top Tracks",
+        "description": "View and discover your most played tracks with beautiful card layouts."
+      },
+      "analytics": {
+        "title": "Music Analytics",
+        "description": "Analyze your listening habits and discover your musical taste in detail."
+      },
+      "responsive": {
+        "title": "Responsive Design",
+        "description": "Modern, mobile-friendly design that works perfectly on all devices."
+      }
+    }
   },
   "quiz": {
     "title": "Music Quiz",
@@ -180,8 +239,8 @@
     "title": "Settings",
     "language": "Language",
     "theme": "Theme",
-    "privacy": "Privacy Settings",
-    "notifications": "Notifications",
+    "privacyTitle": "Privacy Settings",
+    "notificationsTitle": "Notifications",
     "account": "Account",
     "about": "About",
     "version": "Version",
@@ -232,6 +291,7 @@
     "terms": "Terms of Service",
     "contact": "Contact",
     "github": "GitHub",
-    "support": "Support"
+    "support": "Support",
+    "projectRepo": "Project Repository"
   }
 }

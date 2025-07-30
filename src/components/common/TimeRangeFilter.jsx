@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { UI_CONFIG } from '../../constants/spotify';
 
 const FilterContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: ${UI_CONFIG.SPACING.XL};
-  padding: 0 ${UI_CONFIG.SPACING.MD};
+  margin-bottom: 32px;
+  padding: 0 16px;
 `;
 
 const FilterTabs = styled.div`
@@ -26,23 +27,23 @@ const FilterTabs = styled.div`
     display: none;
   }
 
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
+  @media (max-width: 768px) {
     width: 100%;
     justify-content: flex-start;
   }
 `;
 
 const FilterTab = styled.button`
-  background: ${props => props.active ? 
-    `linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_GREEN} 0%, #1ed760 100%)` : 
+  background: ${props => props.active ?
+    'var(--color-gradient-accent)' :
     'transparent'
   };
-  color: ${props => props.active ? 
-    UI_CONFIG.COLORS.SPOTIFY_BLACK : 
-    UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY
+  color: ${props => props.active ?
+    'var(--color-background)' :
+    'var(--color-text-secondary)'
   };
   border: none;
-  padding: ${UI_CONFIG.SPACING.SM} ${UI_CONFIG.SPACING.LG};
+  padding: 8px 24px;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -53,13 +54,13 @@ const FilterTab = styled.button`
   overflow: hidden;
 
   &:hover {
-    color: ${props => props.active ? 
-      UI_CONFIG.COLORS.SPOTIFY_BLACK : 
-      UI_CONFIG.COLORS.WHITE
+    color: ${props => props.active ?
+      'var(--color-background)' :
+      'var(--color-text)'
     };
-    background: ${props => props.active ? 
-      `linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_GREEN} 0%, #1ed760 100%)` : 
-      'rgba(255, 255, 255, 0.1)'
+    background: ${props => props.active ?
+      'var(--color-gradient-accent)' :
+      'var(--color-surface-hover)'
     };
     transform: translateY(-1px);
   }
@@ -105,39 +106,15 @@ const FilterInfo = styled.div`
   }
 `;
 
-const TIME_RANGES = [
-  {
-    key: 'short_term',
-    label: 'Last Week',
-    description: 'Your top tracks from the past 7 days',
-    icon: '📅'
-  },
-  {
-    key: 'medium_term',
-    label: 'Last Month',
-    description: 'Your top tracks from the past month',
-    icon: '📊'
-  },
-  {
-    key: 'long_term',
-    label: '6 Months',
-    description: 'Your top tracks from the past 6 months',
-    icon: '📈'
-  },
-  {
-    key: 'all_time',
-    label: 'All Time',
-    description: 'Your all-time favorite tracks',
-    icon: '🏆'
-  }
-];
 
-const TimeRangeFilter = ({ 
-  selectedRange = 'medium_term', 
+
+const TimeRangeFilter = ({
+  selectedRange = 'medium_term',
   onRangeChange,
-  showDescription = true 
+  showDescription = true
 }) => {
   const [activeRange, setActiveRange] = useState(selectedRange);
+  const { t } = useTranslation();
 
   const handleRangeChange = (range) => {
     setActiveRange(range);
@@ -146,15 +123,42 @@ const TimeRangeFilter = ({
     }
   };
 
+  const getTimeRanges = () => [
+    {
+      key: 'short_term',
+      label: t('timeRange.short_term'),
+      description: t('timeRange.descriptions.short_term'),
+      icon: '📅'
+    },
+    {
+      key: 'medium_term',
+      label: t('timeRange.medium_term'),
+      description: t('timeRange.descriptions.medium_term'),
+      icon: '📊'
+    },
+    {
+      key: 'long_term',
+      label: t('timeRange.long_term'),
+      description: t('timeRange.descriptions.long_term'),
+      icon: '📈'
+    },
+    {
+      key: 'all_time',
+      label: t('timeRange.allTime'),
+      description: t('timeRange.descriptions.all_time'),
+      icon: '🏆'
+    }
+  ];
+
   const getSelectedRangeInfo = () => {
-    return TIME_RANGES.find(range => range.key === activeRange);
+    return getTimeRanges().find(range => range.key === activeRange);
   };
 
   return (
     <>
       <FilterContainer>
         <FilterTabs>
-          {TIME_RANGES.map((range) => (
+          {getTimeRanges().map((range) => (
             <FilterTab
               key={range.key}
               active={activeRange === range.key}

@@ -45,7 +45,7 @@ export const ANIMATION_CONFIG = {
   }
 };
 
-// UI Constants
+// UI Constants - Updated to use CSS Custom Properties
 export const UI_CONFIG = {
   BREAKPOINTS: {
     MOBILE: '768px',
@@ -53,12 +53,12 @@ export const UI_CONFIG = {
     DESKTOP: '1200px'
   },
   COLORS: {
-    SPOTIFY_GREEN: '#1DB954',
-    SPOTIFY_BLACK: '#191414',
-    SPOTIFY_DARK_GRAY: '#121212',
-    SPOTIFY_GRAY: '#535353',
-    SPOTIFY_LIGHT_GRAY: '#B3B3B3',
-    WHITE: '#FFFFFF'
+    SPOTIFY_GREEN: 'var(--color-primary)',
+    SPOTIFY_BLACK: 'var(--color-background)',
+    SPOTIFY_DARK_GRAY: 'var(--color-background-secondary)',
+    SPOTIFY_GRAY: 'var(--color-text-muted)',
+    SPOTIFY_LIGHT_GRAY: 'var(--color-text-secondary)',
+    WHITE: 'var(--color-text)'
   },
   SPACING: {
     XS: '4px',

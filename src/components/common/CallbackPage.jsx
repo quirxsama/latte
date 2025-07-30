@@ -10,7 +10,7 @@ const CallbackContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, ${UI_CONFIG.COLORS.SPOTIFY_BLACK} 0%, ${UI_CONFIG.COLORS.SPOTIFY_DARK_GRAY} 100%);
+  background: var(--color-gradient-primary);
   padding: ${UI_CONFIG.SPACING.MD};
 `;
 

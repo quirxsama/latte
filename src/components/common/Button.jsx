@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { UI_CONFIG } from '../../constants/spotify';
+import { SPACING } from '../../constants/themes';
 
 const StyledButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['variant', 'size', 'loading', 'fullWidth'].includes(prop),
@@ -8,12 +8,12 @@ const StyledButton = styled.button.withConfig({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: ${UI_CONFIG.SPACING.SM};
+  gap: 8px;
   padding: ${props => {
     switch (props.size) {
-      case 'small': return `${UI_CONFIG.SPACING.SM} ${UI_CONFIG.SPACING.MD}`;
-      case 'large': return `${UI_CONFIG.SPACING.LG} ${UI_CONFIG.SPACING.XL}`;
-      default: return `${UI_CONFIG.SPACING.MD} ${UI_CONFIG.SPACING.LG}`;
+      case 'small': return '8px 16px';
+      case 'large': return '24px 32px';
+      default: return '16px 24px';
     }
   }};
   border: none;
@@ -39,7 +39,7 @@ const StyledButton = styled.button.withConfig({
   }
 
   &:focus {
-    outline: 2px solid ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 
@@ -48,15 +48,15 @@ const StyledButton = styled.button.withConfig({
     switch (props.variant) {
       case 'primary':
         return css`
-          background: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
-          color: ${UI_CONFIG.COLORS.SPOTIFY_BLACK};
-          
+          background: var(--color-primary);
+          color: var(--color-background);
+
           &:hover:not(:disabled) {
-            background: #1ed760;
+            background: var(--color-primary-hover);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(29, 185, 84, 0.3);
+            box-shadow: var(--shadow-glow);
           }
-          
+
           &:active:not(:disabled) {
             transform: translateY(0);
           }
@@ -65,15 +65,15 @@ const StyledButton = styled.button.withConfig({
       case 'secondary':
         return css`
           background: transparent;
-          color: ${UI_CONFIG.COLORS.WHITE};
-          border: 2px solid ${UI_CONFIG.COLORS.SPOTIFY_GRAY};
-          
+          color: var(--color-text);
+          border: 2px solid var(--color-border);
+
           &:hover:not(:disabled) {
-            border-color: ${UI_CONFIG.COLORS.WHITE};
-            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-text);
+            background: var(--color-surface-hover);
             transform: translateY(-2px);
           }
-          
+
           &:active:not(:disabled) {
             transform: translateY(0);
           }
@@ -82,25 +82,25 @@ const StyledButton = styled.button.withConfig({
       case 'ghost':
         return css`
           background: transparent;
-          color: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
-          
+          color: var(--color-text-secondary);
+
           &:hover:not(:disabled) {
-            color: ${UI_CONFIG.COLORS.WHITE};
-            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-text);
+            background: var(--color-surface-hover);
           }
         `;
       
       case 'danger':
         return css`
-          background: #e22134;
-          color: ${UI_CONFIG.COLORS.WHITE};
-          
+          background: var(--color-error);
+          color: var(--color-text);
+
           &:hover:not(:disabled) {
             background: #ff4757;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(226, 33, 52, 0.3);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
           }
-          
+
           &:active:not(:disabled) {
             transform: translateY(0);
           }
@@ -108,14 +108,14 @@ const StyledButton = styled.button.withConfig({
       
       default:
         return css`
-          background: ${UI_CONFIG.COLORS.SPOTIFY_GRAY};
-          color: ${UI_CONFIG.COLORS.WHITE};
-          
+          background: var(--color-surface);
+          color: var(--color-text);
+
           &:hover:not(:disabled) {
-            background: ${UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY};
+            background: var(--color-surface-hover);
             transform: translateY(-2px);
           }
-          
+
           &:active:not(:disabled) {
             transform: translateY(0);
           }
@@ -145,12 +145,12 @@ const StyledButton = styled.button.withConfig({
   }
 
   /* Responsive */
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
+  @media (max-width: 768px) {
     padding: ${props => {
       switch (props.size) {
-        case 'small': return `${UI_CONFIG.SPACING.XS} ${UI_CONFIG.SPACING.SM}`;
-        case 'large': return `${UI_CONFIG.SPACING.MD} ${UI_CONFIG.SPACING.LG}`;
-        default: return `${UI_CONFIG.SPACING.SM} ${UI_CONFIG.SPACING.MD}`;
+        case 'small': return '4px 8px';
+        case 'large': return '16px 24px';
+        default: return '8px 16px';
       }
     }};
     font-size: ${props => {
