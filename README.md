@@ -6,7 +6,6 @@ A beautiful, modern React web application that visualizes your Spotify listening
 
 - **🎯 Top Tracks Visualization**: Display your most played 30 tracks with beautiful album artwork
 - **🎮 3D Animations**: Smooth 3D card effects and transitions using anime.js
-- **🎵 Integrated Music Player**: Play tracks directly in your browser using Spotify Web Playback SDK
 - **📱 Responsive Design**: Optimized for mobile, tablet, and desktop devices
 - **🔐 Secure Authentication**: OAuth 2.0 with PKCE flow for Spotify integration
 - **⚡ Performance Optimized**: Rate limiting, caching, and lazy loading for optimal performance

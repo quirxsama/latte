@@ -20,6 +20,10 @@
     "dashboard": "Ana Sayfa",
     "topTracks": "En Çok Dinlenenler",
     "quiz": "Müzik Yarışması",
+    "account": "Hesap",
+    "accountSettings": "Hesap Ayarları",
+    "privacySettings": "Gizlilik Ayarları",
+    "helpSupport": "Yardım ve Destek",
     "compare": "Karşılaştır",
     "settings": "Ayarlar",
     "logout": "Çıkış Yap",
@@ -175,6 +179,39 @@
       }
     }
   },
+  "account": {
+    "loading": "Hesap bilgileri yükleniyor...",
+    "error": "Hesap bilgileri yüklenirken hata oluştu",
+    "unknownUser": "Bilinmeyen Kullanıcı",
+    "noEmail": "E-posta bulunamadı",
+    "userAvatar": "Kullanıcı Avatarı",
+    "stats": {
+      "playlists": "Çalma Listesi",
+      "followers": "Takipçi"
+    },
+    "settings": {
+      "title": "Hesap Ayarları",
+      "language": "Dil Tercihi",
+      "languageDesc": "Uygulamanın görüntüleneceği dili seçin",
+      "theme": "Tema Tercihi",
+      "themeDesc": "Açık veya koyu tema seçin",
+      "privacy": "Gizlilik Ayarları",
+      "privacyDesc": "Veri paylaşımı ve gizlilik tercihlerinizi yönetin",
+      "friends": "Arkadaşlar",
+      "friendsDesc": "Arkadaşlarınızla müzik zevkinizi karşılaştırın ve keşfedin",
+      "manage": "Yönet",
+      "comingSoon": "Yakında"
+    },
+    "dangerZone": {
+      "title": "Tehlikeli Bölge",
+      "clearData": "Yerel Verileri Temizle",
+      "clearDataDesc": "Tüm yerel verileri ve önbelleği temizle",
+      "clear": "Temizle",
+      "logout": "Çıkış Yap",
+      "logoutDesc": "Hesabınızdan çıkış yapın ve tüm oturumu sonlandırın",
+      "logoutButton": "Çıkış Yap"
+    }
+  },
   "quiz": {
     "title": "Müzik Yarışması",
     "description": "En çok dinlediğiniz şarkılarla müzik bilginizi test edin",
@@ -185,10 +222,12 @@
     "score": "Puan",
     "question": "Soru",
     "total": "Toplam",
+    "questionCounter": "Soru {{current}} / {{total}}",
     "playing": "Çalıyor...",
     "clickToPlay": "5 saniyelik bölümü çalmak için tıklayın",
     "correct": "Doğru!",
     "wrong": "Yanlış!",
+    "complete": "Yarışma Tamamlandı!",
     "gameComplete": "Yarışma Tamamlandı!",
     "finalScore": "Final Puanı",
     "scoreMessages": {

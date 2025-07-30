@@ -281,6 +281,38 @@ class SpotifyApiService {
     }
   }
 
+  // Get user's playlists
+  async getUserPlaylists(userId, options = {}) {
+    try {
+      const params = {
+        limit: options.limit || 20,
+        offset: options.offset || 0
+      };
+
+      const response = await this.api.get(`/users/${userId}/playlists`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user playlists:', error);
+      throw new Error('Failed to fetch user playlists');
+    }
+  }
+
+  // Get current user's playlists
+  async getCurrentUserPlaylists(options = {}) {
+    try {
+      const params = {
+        limit: options.limit || 20,
+        offset: options.offset || 0
+      };
+
+      const response = await this.api.get('/me/playlists', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching current user playlists:', error);
+      throw new Error('Failed to fetch current user playlists');
+    }
+  }
+
   // Get available devices
   async getDevices() {
     try {

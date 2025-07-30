@@ -8,6 +8,7 @@ import LoginPage from './components/common/LoginPage';
 import CallbackPage from './components/common/CallbackPage';
 import HomePage from './pages/HomePage';
 import QuizPage from './pages/QuizPage';
+import AccountPage from './pages/AccountPage';
 import LandingPage from './pages/LandingPage';
 import LoadingSpinner from './components/common/LoadingSpinner';
 
@@ -19,7 +20,11 @@ const ProtectedRoute = ({ children }) => {
     return <LoadingSpinner size="large" text="Loading..." />;
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  // For development/testing: allow access if in development mode
+  const isDevelopment = import.meta.env.DEV;
+  const allowTestAccess = isDevelopment && localStorage.getItem('latte_test_mode') === 'true';
+
+  return (isAuthenticated || allowTestAccess) ? children : <Navigate to="/login" replace />;
 };
 
 // Public Route Component (redirect to home if authenticated)
@@ -70,6 +75,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <QuizPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <AccountPage />
                 </ProtectedRoute>
               }
             />

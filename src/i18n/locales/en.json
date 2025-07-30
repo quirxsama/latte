@@ -20,6 +20,10 @@
     "dashboard": "Dashboard",
     "topTracks": "Top Tracks",
     "quiz": "Quiz",
+    "account": "Account",
+    "accountSettings": "Account Settings",
+    "privacySettings": "Privacy Settings",
+    "helpSupport": "Help & Support",
     "compare": "Compare",
     "settings": "Settings",
     "logout": "Logout",
@@ -175,6 +179,39 @@
       }
     }
   },
+  "account": {
+    "loading": "Loading account information...",
+    "error": "Error loading account information",
+    "unknownUser": "Unknown User",
+    "noEmail": "No email found",
+    "userAvatar": "User Avatar",
+    "stats": {
+      "playlists": "Playlists",
+      "followers": "Followers"
+    },
+    "settings": {
+      "title": "Account Settings",
+      "language": "Language Preference",
+      "languageDesc": "Choose the language for the application",
+      "theme": "Theme Preference",
+      "themeDesc": "Choose between light and dark theme",
+      "privacy": "Privacy Settings",
+      "privacyDesc": "Manage your data sharing and privacy preferences",
+      "friends": "Friends",
+      "friendsDesc": "Compare and discover music taste with your friends",
+      "manage": "Manage",
+      "comingSoon": "Coming Soon"
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "clearData": "Clear Local Data",
+      "clearDataDesc": "Clear all local data and cache",
+      "clear": "Clear",
+      "logout": "Logout",
+      "logoutDesc": "Sign out of your account and end all sessions",
+      "logoutButton": "Logout"
+    }
+  },
   "quiz": {
     "title": "Music Quiz",
     "description": "Test your music knowledge with your top tracks",
@@ -185,10 +222,12 @@
     "score": "Score",
     "question": "Question",
     "total": "Total",
+    "questionCounter": "Question {{current}} of {{total}}",
     "playing": "Playing...",
     "clickToPlay": "Click to play 5-second snippet",
     "correct": "Correct!",
     "wrong": "Wrong!",
+    "complete": "Quiz Complete!",
     "gameComplete": "Quiz Complete!",
     "finalScore": "Final Score",
     "scoreMessages": {

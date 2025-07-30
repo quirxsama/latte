@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { UI_CONFIG } from '../../constants/spotify';
 import Button from '../common/Button';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -216,6 +217,7 @@ const GameOverScreen = styled.div`
 `;
 
 const MusicQuiz = ({ tracks = [] }) => {
+  const { t } = useTranslation();
   const [gameState, setGameState] = useState('waiting'); // waiting, playing, answered, gameOver
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -369,15 +371,15 @@ const MusicQuiz = ({ tracks = [] }) => {
         <QuizTitle>🎵 Music Quiz</QuizTitle>
         <ScoreBoard>
           <ScoreItem>
-            <div className="label">Score</div>
+            <div className="label">{t('quiz.score')}</div>
             <div className="value">{score}</div>
           </ScoreItem>
           <ScoreItem>
-            <div className="label">Question</div>
+            <div className="label">{t('quiz.question')}</div>
             <div className="value">{gameState === 'waiting' ? '0' : currentQuestion + 1}</div>
           </ScoreItem>
           <ScoreItem>
-            <div className="label">Total</div>
+            <div className="label">{t('quiz.total')}</div>
             <div className="value">{TOTAL_QUESTIONS}</div>
           </ScoreItem>
         </ScoreBoard>
@@ -386,13 +388,13 @@ const MusicQuiz = ({ tracks = [] }) => {
       {gameState === 'waiting' && (
         <GameArea>
           <h2 style={{ color: UI_CONFIG.COLORS.WHITE, marginBottom: UI_CONFIG.SPACING.LG }}>
-            Ready to test your music knowledge?
+            {t('quiz.ready')}
           </h2>
           <p style={{ color: UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY, marginBottom: UI_CONFIG.SPACING.XL }}>
-            Listen to 5-second snippets of your top tracks and guess the correct song!
+            {t('quiz.instructions')}
           </p>
           <Button variant="primary" size="large" onClick={startGame}>
-            🎮 Start Quiz
+            🎮 {t('quiz.startQuiz')}
           </Button>
         </GameArea>
       )}
@@ -400,7 +402,7 @@ const MusicQuiz = ({ tracks = [] }) => {
       {(gameState === 'playing' || gameState === 'answered') && (
         <GameArea>
           <QuestionCounter>
-            Question {currentQuestion + 1} of {TOTAL_QUESTIONS}
+            {t('quiz.questionCounter', { current: currentQuestion + 1, total: TOTAL_QUESTIONS })}
           </QuestionCounter>
 
           <AudioPlayer>
@@ -450,16 +452,16 @@ const MusicQuiz = ({ tracks = [] }) => {
 
       {gameState === 'gameOver' && (
         <GameOverScreen>
-          <h2>🏆 Quiz Complete!</h2>
+          <h2>🏆 {t('quiz.complete')}</h2>
           <div className="final-score">{score}/{TOTAL_QUESTIONS}</div>
           <div className="score-text">
-            {score === TOTAL_QUESTIONS ? 'Perfect! You know your music!' :
-             score >= TOTAL_QUESTIONS * 0.8 ? 'Excellent music knowledge!' :
-             score >= TOTAL_QUESTIONS * 0.6 ? 'Good job! Keep listening!' :
-             'Keep exploring your music taste!'}
+            {score === TOTAL_QUESTIONS ? t('quiz.scoreMessages.perfect') :
+             score >= TOTAL_QUESTIONS * 0.8 ? t('quiz.scoreMessages.excellent') :
+             score >= TOTAL_QUESTIONS * 0.6 ? t('quiz.scoreMessages.good') :
+             t('quiz.scoreMessages.keepExploring')}
           </div>
           <Button variant="primary" size="large" onClick={startGame}>
-            🔄 Play Again
+            🔄 {t('quiz.playAgain')}
           </Button>
         </GameOverScreen>
       )}

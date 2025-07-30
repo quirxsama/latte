@@ -208,11 +208,11 @@ const GenreStats = ({ genreStats = [], totalTracks = 0, allGenres = [] }) => {
     Math.round(genreStats.reduce((sum, g) => sum + g.percentage, 0) / totalGenres) : 0;
 
   const getDiversityLevel = (score) => {
-    if (score >= 80) return { level: 'Exceptional', emoji: '🌟' };
-    if (score >= 60) return { level: 'High', emoji: '🎯' };
-    if (score >= 40) return { level: 'Moderate', emoji: '🎵' };
-    if (score >= 20) return { level: 'Low', emoji: '📊' };
-    return { level: 'Very Low', emoji: '📈' };
+    if (score >= 80) return { level: t('genre.stats.diversityLevels.exceptional'), emoji: '🌟' };
+    if (score >= 60) return { level: t('genre.stats.diversityLevels.high'), emoji: '🎯' };
+    if (score >= 40) return { level: t('genre.stats.diversityLevels.moderate'), emoji: '🎵' };
+    if (score >= 20) return { level: t('genre.stats.diversityLevels.low'), emoji: '📊' };
+    return { level: t('genre.stats.diversityLevels.veryLow'), emoji: '📈' };
   };
 
   const diversityLevel = getDiversityLevel(diversityScore);
@@ -243,31 +243,31 @@ const GenreStats = ({ genreStats = [], totalTracks = 0, allGenres = [] }) => {
         <StatCard>
           <StatIcon>🎶</StatIcon>
           <StatValue>{totalGenres}</StatValue>
-          <StatLabel>Different Genres</StatLabel>
+          <StatLabel>{t('genre.stats.differentGenres')}</StatLabel>
         </StatCard>
 
         <StatCard>
           <StatIcon>🎵</StatIcon>
           <StatValue>{totalTracks}</StatValue>
-          <StatLabel>Total Tracks</StatLabel>
+          <StatLabel>{t('genre.stats.totalTracks')}</StatLabel>
         </StatCard>
 
         <StatCard>
           <StatIcon>📊</StatIcon>
           <StatValue>{averagePercentage}%</StatValue>
-          <StatLabel>Average Distribution</StatLabel>
+          <StatLabel>{t('genre.stats.averageDistribution')}</StatLabel>
         </StatCard>
 
         <StatCard>
           <StatIcon>{diversityLevel.emoji}</StatIcon>
           <StatValue>{diversityScore}</StatValue>
-          <StatLabel>Diversity Score</StatLabel>
+          <StatLabel>{t('genre.stats.diversityScore')}</StatLabel>
         </StatCard>
       </StatsGrid>
 
       {topGenres.length > 0 && (
         <GenreChart>
-          <ChartTitle>Top Genres Distribution</ChartTitle>
+          <ChartTitle>{t('genre.stats.topGenres')}</ChartTitle>
           {topGenres.map((genre, index) => (
             <GenreBar key={genre.id}>
               <GenreInfo>
@@ -287,16 +287,12 @@ const GenreStats = ({ genreStats = [], totalTracks = 0, allGenres = [] }) => {
       )}
 
       <DiversityMeter>
-        <DiversityTitle>Musical Diversity</DiversityTitle>
+        <DiversityTitle>{t('genre.stats.musicalDiversity')}</DiversityTitle>
         <DiversityCircle score={diversityScore}>
           <DiversityScore>{diversityScore}</DiversityScore>
         </DiversityCircle>
         <DiversityDescription>
-          Your musical diversity is <strong>{diversityLevel.level}</strong>. 
-          {diversityScore >= 60 ? 
-            ' You have a wonderfully varied taste in music!' :
-            ' Try exploring new genres to increase your diversity!'
-          }
+          {t('genre.stats.diversityMessages.' + (diversityScore >= 60 ? 'high' : 'low'))}
         </DiversityDescription>
       </DiversityMeter>
     </StatsContainer>

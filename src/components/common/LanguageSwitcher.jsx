@@ -41,7 +41,7 @@ const SwitcherButton = styled.button`
   .arrow {
     font-size: 0.7rem;
     transition: transform 0.3s ease;
-    transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
+    transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
   }
 `;
 
@@ -57,9 +57,9 @@ const DropdownMenu = styled.div`
   box-shadow: var(--shadow-large);
   z-index: 1000;
   min-width: 120px;
-  opacity: ${props => props.isOpen ? 1 : 0};
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
-  transform: ${props => props.isOpen ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)'};
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  transform: ${props => props.$isOpen ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)'};
   transition: all 0.3s ease;
   transform-origin: top right;
 `;
@@ -156,9 +156,9 @@ const LanguageSwitcher = ({ className }) => {
 
   return (
     <SwitcherContainer className={className} data-language-switcher>
-      <SwitcherButton 
+      <SwitcherButton
         onClick={toggleDropdown}
-        isOpen={isOpen}
+        $isOpen={isOpen}
         title={`Current language: ${currentLanguage.nativeName}`}
       >
         <span className="flag">{currentLanguage.flag}</span>
@@ -166,7 +166,7 @@ const LanguageSwitcher = ({ className }) => {
         <span className="arrow">▼</span>
       </SwitcherButton>
 
-      <DropdownMenu isOpen={isOpen}>
+      <DropdownMenu $isOpen={isOpen}>
         {languages.map((language) => (
           <LanguageOption
             key={language.code}
