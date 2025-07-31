@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const User = require('../models/User');
+const { auth } = require('../middleware/auth');
+const sqliteDB = require('../config/sqlite');
 
 // GET /api/search/users?q=searchTerm - Search users
 router.get('/users', auth, async (req, res) => {
@@ -10,55 +10,26 @@ router.get('/users', auth, async (req, res) => {
     const currentUserId = req.userId;
 
     if (!searchTerm || searchTerm.trim().length < 2) {
-      return res.status(400).json({ 
-        message: 'Search term must be at least 2 characters long' 
+      return res.status(400).json({
+        message: 'Search term must be at least 2 characters long'
       });
     }
 
-    // Search users by display name or spotify ID
-    const users = await User.find({
-      _id: { $ne: currentUserId }, // Exclude current user
-      'privacy.showProfile': true, // Only show users with public profiles
-      $or: [
-        { displayName: { $regex: searchTerm, $options: 'i' } },
-        { spotifyId: { $regex: searchTerm, $options: 'i' } }
-      ]
-    })
-    .select('displayName profileImage spotifyId country followers')
-    .limit(parseInt(limit))
-    .lean();
+    // Search users using SQLite
+    const users = sqliteDB.searchUsers(searchTerm, currentUserId, parseInt(limit));
 
-    // Get current user's friends and friend requests to show relationship status
-    const currentUser = await User.findById(currentUserId)
-      .select('friends friendRequests')
-      .lean();
-
-    const friendIds = currentUser.friends.map(f => f.userId.toString());
-    const sentRequestIds = currentUser.friendRequests.sent.map(r => r.userId.toString());
-    const receivedRequestIds = currentUser.friendRequests.received.map(r => r.userId.toString());
-
-    // Add relationship status to each user
-    const usersWithStatus = users.map(user => {
-      let relationshipStatus = 'none';
-      
-      if (friendIds.includes(user._id.toString())) {
-        relationshipStatus = 'friends';
-      } else if (sentRequestIds.includes(user._id.toString())) {
-        relationshipStatus = 'request_sent';
-      } else if (receivedRequestIds.includes(user._id.toString())) {
-        relationshipStatus = 'request_received';
-      }
-
-      return {
-        id: user._id,
+    // Filter only users with public profiles
+    const usersWithStatus = users
+      .filter(user => user.privacy?.showProfile)
+      .map(user => ({
+        id: user.id,
         displayName: user.displayName,
         profileImage: user.profileImage,
         spotifyId: user.spotifyId,
         country: user.country,
         followers: user.followers,
-        relationshipStatus
-      };
-    });
+        relationshipStatus: user.relationshipStatus
+      }));
 
     res.json({
       success: true,
@@ -88,9 +59,9 @@ router.get('/tracks', auth, async (req, res) => {
       });
     }
 
-    const user = await User.findById(currentUserId).select('musicStats');
-    
-    if (!user || !user.musicStats.topTracks) {
+    const user = sqliteDB.getUserById(currentUserId);
+
+    if (!user || !user.musicStats?.topTracks) {
       return res.json({
         success: true,
         tracks: [],
@@ -148,7 +119,7 @@ router.get('/artists', auth, async (req, res) => {
       });
     }
 
-    const user = await User.findById(currentUserId).select('musicStats');
+    const user = sqliteDB.getUserById(currentUserId);
     
     if (!user || !user.musicStats.topArtists) {
       return res.json({
@@ -201,7 +172,7 @@ router.get('/suggestions', auth, async (req, res) => {
   try {
     const currentUserId = req.userId;
 
-    const user = await User.findById(currentUserId).select('musicStats');
+    const user = sqliteDB.getUserById(currentUserId);
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

@@ -20,11 +20,7 @@
     "server:dev": "nodemon server/server.js",
     "server:test": "NODE_ENV=test node server/server.js",
     "start:all": "concurrently \"npm run server:dev\" \"npm run dev\"",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f mongodb",
-    "db:start": "npm run docker:up && echo 'Waiting for MongoDB to start...' && sleep 5",
-    "dev:full": "npm run db:start && npm run start:all"
+    "dev:full": "npm run start:all"
   },
   "dependencies": {
     "animejs": "^4.1.2",
@@ -39,7 +35,7 @@
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.17.0",
+
     "morgan": "^1.10.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

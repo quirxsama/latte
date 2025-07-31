@@ -5,10 +5,10 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/GlobalStyles';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import LoginPage from './components/common/LoginPage';
-import CallbackPage from './components/common/CallbackPage';
 import HomePage from './pages/HomePage';
-
 import AccountPage from './pages/AccountPage';
+import FriendsPage from './pages/FriendsPage';
+import CallbackPage from './pages/CallbackPage';
 import LandingPage from './pages/LandingPage';
 import AuthTestPage from './pages/AuthTestPage';
 import LoadingSpinner from './components/common/LoadingSpinner';
@@ -86,6 +86,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AccountPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/friends"
+              element={
+                <ProtectedRoute>
+                  <FriendsPage />
                 </ProtectedRoute>
               }
             />

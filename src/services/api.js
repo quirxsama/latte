@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3001/api';
 
 class ApiService {
   constructor() {
@@ -116,6 +116,121 @@ class ApiService {
     } catch (error) {
       console.error('Get public profile error:', error);
       throw new Error(error.response?.data?.message || 'Failed to get user profile');
+    }
+  }
+
+  // Friends endpoints
+  async getFriends() {
+    try {
+      const response = await this.api.get('/friends');
+      return response.data;
+    } catch (error) {
+      console.error('Get friends error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to get friends');
+    }
+  }
+
+  async searchUsers(query, limit = 20) {
+    try {
+      const response = await this.api.get('/friends/search', {
+        params: { q: query, limit }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Search users error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to search users');
+    }
+  }
+
+  async getPendingFriendRequests() {
+    try {
+      const response = await this.api.get('/friends/requests/pending');
+      return response.data;
+    } catch (error) {
+      console.error('Get pending requests error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to get pending requests');
+    }
+  }
+
+  async getSentFriendRequests() {
+    try {
+      const response = await this.api.get('/friends/requests/sent');
+      return response.data;
+    } catch (error) {
+      console.error('Get sent requests error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to get sent requests');
+    }
+  }
+
+  async sendFriendRequest(userId) {
+    try {
+      const response = await this.api.post('/friends/request', { userId });
+      return response.data;
+    } catch (error) {
+      console.error('Send friend request error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to send friend request');
+    }
+  }
+
+  async acceptFriendRequest(requestId) {
+    try {
+      const response = await this.api.post(`/friends/request/${requestId}/accept`);
+      return response.data;
+    } catch (error) {
+      console.error('Accept friend request error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to accept friend request');
+    }
+  }
+
+  async declineFriendRequest(requestId) {
+    try {
+      const response = await this.api.post(`/friends/request/${requestId}/decline`);
+      return response.data;
+    } catch (error) {
+      console.error('Decline friend request error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to decline friend request');
+    }
+  }
+
+  async removeFriend(friendId) {
+    try {
+      const response = await this.api.delete(`/friends/${friendId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Remove friend error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to remove friend');
+    }
+  }
+
+  async getFriendProfile(friendId) {
+    try {
+      const response = await this.api.get(`/friends/${friendId}/profile`);
+      return response.data;
+    } catch (error) {
+      console.error('Get friend profile error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to get friend profile');
+    }
+  }
+
+  async updatePrivacySettings(settings) {
+    try {
+      const response = await this.api.put('/users/privacy', settings);
+      return response.data;
+    } catch (error) {
+      console.error('Update privacy settings error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to update privacy settings');
+    }
+  }
+
+  async searchUsers(query) {
+    try {
+      const response = await this.api.get('/auth/search-users', {
+        params: { query }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Search users error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to search users');
     }
   }
 

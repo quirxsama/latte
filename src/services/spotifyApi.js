@@ -396,6 +396,79 @@ class SpotifyApiService {
       throw new Error('Failed to transfer playback');
     }
   }
+
+  // Get user's followed artists (can be used to find mutual connections)
+  async getFollowedArtists(limit = 50) {
+    try {
+      const cacheKey = `followed_artists_${limit}`;
+      const cached = this.cache.get(cacheKey);
+      if (cached) return cached;
+
+      await this.rateLimiter.waitForSlot();
+      const response = await this.api.get('/me/following', {
+        params: {
+          type: 'artist',
+          limit: limit
+        }
+      });
+
+      const result = response.data.artists;
+      this.cache.set(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error('Error fetching followed artists:', error);
+      throw new Error('Failed to fetch followed artists');
+    }
+  }
+
+  // Get user's playlists (can be used to find public playlists and mutual connections)
+  async getUserPlaylists(userId = 'me', limit = 50) {
+    try {
+      const cacheKey = `user_playlists_${userId}_${limit}`;
+      const cached = this.cache.get(cacheKey);
+      if (cached) return cached;
+
+      await this.rateLimiter.waitForSlot();
+      const response = await this.api.get(`/users/${userId}/playlists`, {
+        params: {
+          limit: limit
+        }
+      });
+
+      const result = response.data;
+      this.cache.set(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error('Error fetching user playlists:', error);
+      throw new Error('Failed to fetch user playlists');
+    }
+  }
+
+  // Search for users by name (limited functionality in Spotify API)
+  async searchUsers(query, limit = 20) {
+    try {
+      const cacheKey = `search_users_${query}_${limit}`;
+      const cached = this.cache.get(cacheKey);
+      if (cached) return cached;
+
+      await this.rateLimiter.waitForSlot();
+      const response = await this.api.get('/search', {
+        params: {
+          q: query,
+          type: 'user',
+          limit: limit
+        }
+      });
+
+      const result = response.data.users;
+      this.cache.set(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error('Error searching users:', error);
+      // Spotify API doesn't always support user search, so return empty result
+      return { items: [] };
+    }
+  }
 }
 
 export default new SpotifyApiService();

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const {
   validateSpotifyAuth,
   validateProfileUpdate,
@@ -10,7 +10,8 @@ const {
   spotifyAuth,
   getProfile,
   updateProfile,
-  updateMusicStats
+  updateMusicStats,
+  searchUsers
 } = require('../controllers/authController');
 
 // User-specific rate limiting
@@ -27,5 +28,8 @@ router.put('/profile', auth, userRateLimit, validateProfileUpdate, updateProfile
 
 // POST /api/auth/music-stats - Update music statistics
 router.post('/music-stats', auth, userRateLimit, updateMusicStats);
+
+// GET /api/auth/search-users - Search users by user ID or display name (temporarily without auth for testing)
+router.get('/search-users', userRateLimit, searchUsers);
 
 module.exports = router;

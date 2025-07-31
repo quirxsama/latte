@@ -1,5 +1,6 @@
 const sqliteDB = require('../config/sqlite');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 // Generate JWT token
 const generateToken = (userId) => {
@@ -217,9 +218,59 @@ const updateMusicStats = async (req, res) => {
   }
 };
 
+// Search users by user ID or display name
+const searchUsers = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query || query.trim().length < 2) {
+      return res.status(400).json({ message: 'Search query must be at least 2 characters' });
+    }
+
+    const users = sqliteDB.searchUsers(query.trim(), 20);
+
+    // Filter out current user and add relationship status
+    const currentUserId = req.userId || 0; // Default to 0 if no auth
+
+    const filteredUsers = users
+      .filter(user => user.id !== currentUserId)
+      .map(user => {
+        let relationshipStatus = 'none';
+
+        if (currentUserId && currentUserId > 0) {
+          const friendship = sqliteDB.checkFriendship(currentUserId, user.id);
+          const pendingRequest = sqliteDB.getFriendRequestStatus(currentUserId, user.id);
+          relationshipStatus = friendship ? 'friends' : (pendingRequest ? 'pending' : 'none');
+        }
+
+        return {
+          id: user.id,
+          userId: user.userId,
+          displayName: user.displayName,
+          profileImage: user.profileImage,
+          country: user.country,
+          relationshipStatus
+        };
+      });
+
+    res.json({
+      success: true,
+      users: filteredUsers,
+      count: filteredUsers.length
+    });
+  } catch (error) {
+    console.error('Search users error:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   spotifyAuth,
   getProfile,
   updateProfile,
-  updateMusicStats
+  updateMusicStats,
+  searchUsers
 };

@@ -31,4 +31,7 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+// Alternative name for the same function (for consistency with friends routes)
+const authenticateToken = auth;
+
+module.exports = { auth, authenticateToken };

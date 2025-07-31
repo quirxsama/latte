@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { UI_CONFIG } from '../constants/spotify';
@@ -9,6 +10,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import Button from '../components/common/Button';
 import LanguageSwitcher from '../components/common/LanguageSwitcher';
 import ThemeToggle from '../components/common/ThemeToggle';
+import PrivacySettings from '../components/settings/PrivacySettings';
 import spotifyApi from '../services/spotifyApi';
 
 const PageContainer = styled.div`
@@ -167,9 +169,11 @@ const DangerTitle = styled.h3`
 const AccountPage = () => {
   const { t } = useTranslation();
   const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [userStats, setUserStats] = useState(null);
   const [error, setError] = useState(null);
+  const [showPrivacySettings, setShowPrivacySettings] = useState(false);
 
   // Test mode check
   const isDevelopment = import.meta.env.DEV;
@@ -306,8 +310,12 @@ const AccountPage = () => {
                 <SettingLabel>{t('account.settings.privacy')}</SettingLabel>
                 <SettingDescription>{t('account.settings.privacyDesc')}</SettingDescription>
               </div>
-              <Button variant="ghost" size="small">
-                {t('account.settings.manage')}
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => setShowPrivacySettings(!showPrivacySettings)}
+              >
+                {showPrivacySettings ? t('common.hide') : t('account.settings.manage')}
               </Button>
             </SettingItem>
 
@@ -316,8 +324,12 @@ const AccountPage = () => {
                 <SettingLabel>{t('account.settings.friends')}</SettingLabel>
                 <SettingDescription>{t('account.settings.friendsDesc')}</SettingDescription>
               </div>
-              <Button variant="ghost" size="small" disabled>
-                {t('account.settings.comingSoon')}
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => navigate('/friends')}
+              >
+                {t('account.settings.manage')}
               </Button>
             </SettingItem>
 
@@ -345,6 +357,8 @@ const AccountPage = () => {
               </SettingItem>
             </DangerZone>
           </SettingsCard>
+
+          {showPrivacySettings && <PrivacySettings />}
         </AccountContainer>
       </MainContent>
     </PageContainer>

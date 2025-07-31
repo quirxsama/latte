@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { UI_CONFIG } from '../../constants/spotify';
-import { useAuth } from '../../contexts/AuthContext';
-import LoadingSpinner from './LoadingSpinner';
+import { SPACING, BREAKPOINTS } from '../constants/themes';
+import { SPOTIFY_CONFIG } from '../constants/spotify';
+import { useAuth } from '../contexts/AuthContext';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const CallbackContainer = styled.div`
   min-height: 100vh;
@@ -11,7 +12,7 @@ const CallbackContainer = styled.div`
   align-items: center;
   justify-content: center;
   background: var(--color-gradient-primary);
-  padding: ${UI_CONFIG.SPACING.MD};
+  padding: ${SPACING.MD};
 `;
 
 const CallbackCard = styled.div`
@@ -19,21 +20,21 @@ const CallbackCard = styled.div`
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
-  padding: ${UI_CONFIG.SPACING.XXL};
+  padding: ${SPACING.XXL};
   text-align: center;
   max-width: 500px;
   width: 100%;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
-    padding: ${UI_CONFIG.SPACING.XL};
+  @media (max-width: ${BREAKPOINTS.MOBILE}) {
+    padding: ${SPACING.XL};
     border-radius: 16px;
   }
 `;
 
 const StatusMessage = styled.div`
-  margin-top: ${UI_CONFIG.SPACING.LG};
-  color: ${UI_CONFIG.COLORS.WHITE};
+  margin-top: ${SPACING.LG};
+  color: #ffffff;
   font-size: 1.125rem;
   line-height: 1.6;
 `;
@@ -42,8 +43,8 @@ const ErrorMessage = styled.div`
   background: rgba(255, 71, 87, 0.1);
   border: 1px solid rgba(255, 71, 87, 0.3);
   border-radius: 8px;
-  padding: ${UI_CONFIG.SPACING.MD};
-  margin-top: ${UI_CONFIG.SPACING.LG};
+  padding: ${SPACING.MD};
+  margin-top: ${SPACING.LG};
   color: #ff4757;
   font-size: 0.9rem;
   line-height: 1.4;
@@ -53,9 +54,9 @@ const SuccessMessage = styled.div`
   background: rgba(29, 185, 84, 0.1);
   border: 1px solid rgba(29, 185, 84, 0.3);
   border-radius: 8px;
-  padding: ${UI_CONFIG.SPACING.MD};
-  margin-top: ${UI_CONFIG.SPACING.LG};
-  color: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
+  padding: ${SPACING.MD};
+  margin-top: ${SPACING.LG};
+  color: #1DB954;
   font-size: 0.9rem;
   line-height: 1.4;
 `;
@@ -97,13 +98,16 @@ const CallbackPage = () => {
 
         setMessage('Processing authentication...');
 
+        // Clear URL parameters immediately to prevent reuse
+        window.history.replaceState({}, document.title, window.location.pathname);
+
         // Handle the callback
         const success = await handleCallback(code, state);
 
         if (success) {
           setStatus('success');
-          setMessage('Authentication successful! Redirecting...');
-          setTimeout(() => navigate('/'), 2000);
+          setMessage('Authentication successful! Redirecting to dashboard...');
+          setTimeout(() => navigate('/dashboard'), 1500);
         } else {
           setStatus('error');
           setMessage('Authentication failed. Please try again.');

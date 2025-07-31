@@ -11,6 +11,8 @@
     "previous": "Previous",
     "search": "Search",
     "filter": "Filter",
+    "saving": "Saving...",
+    "hide": "Hide",
     "all": "All",
     "none": "None",
     "yes": "Yes",
@@ -211,6 +213,49 @@
       "logoutDesc": "Sign out of your account and end all sessions",
       "logoutButton": "Logout"
     }
+  },
+
+  "privacy": {
+    "title": "Privacy Settings",
+    "description": "Control who can see your music data and interact with you",
+    "allowComparison": "Allow Music Comparison",
+    "allowComparisonDesc": "Let other users compare their music taste with yours",
+    "showProfile": "Show Profile",
+    "showProfileDesc": "Make your profile visible in search results",
+    "showTopTracks": "Show Top Tracks to Friends",
+    "showTopTracksDesc": "Allow friends to see your most played tracks",
+    "showTopArtists": "Show Top Artists to Friends",
+    "showTopArtistsDesc": "Allow friends to see your favorite artists",
+    "allowFriendRequests": "Allow Friend Requests",
+    "allowFriendRequestsDesc": "Let other users send you friend requests",
+    "saved": "Privacy settings saved successfully",
+    "error": "Failed to save privacy settings"
+  },
+
+  "friends": {
+    "title": "Friends",
+    "description": "Manage your friends and discover new music connections",
+    "searchPlaceholder": "Search for users...",
+    "noFriends": "You don't have any friends yet",
+    "noRequests": "No pending friend requests",
+    "sendRequest": "Send Request",
+    "requestSent": "Request Sent",
+    "accept": "Accept",
+    "decline": "Decline",
+    "remove": "Remove Friend",
+    "compatibility": "Music Compatibility",
+    "sharedArtists": "Shared Artists",
+    "sharedTracks": "Shared Tracks",
+    "sharedGenres": "Shared Genres",
+    "friendRequests": "Friend Requests",
+    "sentRequests": "Sent Requests",
+    "receivedRequests": "Received Requests",
+    "viewProfile": "View Profile",
+    "requestAccepted": "Friend request accepted",
+    "requestDeclined": "Friend request declined",
+    "requestSentSuccess": "Friend request sent",
+    "friendRemoved": "Friend removed",
+    "error": "An error occurred"
   },
 
   "player": {

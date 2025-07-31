@@ -224,9 +224,70 @@ const createUserRateLimit = (windowMs = 15 * 60 * 1000, max = 100) => {
   };
 };
 
+// Friend request validation
+const validateFriendRequest = (req, res, next) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required'
+      });
+    }
+
+    if (!Number.isInteger(parseInt(userId)) || parseInt(userId) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID'
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Friend request validation error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Friend request validation failed'
+    });
+  }
+};
+
+// User ID validation for params
+const validateUserId = (req, res, next) => {
+  try {
+    const { friendId, userId } = req.params;
+    const id = friendId || userId;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required'
+      });
+    }
+
+    if (!Number.isInteger(parseInt(id)) || parseInt(id) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID'
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('User ID validation error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'User ID validation failed'
+    });
+  }
+};
+
 module.exports = {
   validateSpotifyAuth,
   validateProfileUpdate,
+  validateFriendRequest,
+  validateUserId,
 
   createUserRateLimit,
   sanitizeString,

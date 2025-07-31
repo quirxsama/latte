@@ -174,6 +174,20 @@ export const AuthProvider = ({ children }) => {
         console.log('✅ Authentication successful:', backendResponse.user.displayName);
         console.log('🔗 Backend integration successful');
 
+        // Check for Spotify friends after successful authentication
+        try {
+          console.log('🔍 Checking for Spotify friends...');
+          const friendsResult = await apiService.checkSpotifyFriends();
+          if (friendsResult.addedCount > 0) {
+            console.log(`👥 Found and sent friend requests to ${friendsResult.addedCount} potential friends`);
+          } else {
+            console.log('👥 No new potential friends found');
+          }
+        } catch (friendsError) {
+          console.warn('⚠️ Failed to check Spotify friends:', friendsError.message);
+          // Don't fail the authentication if friend checking fails
+        }
+
         return true;
       } catch (backendError) {
         console.warn('⚠️ Backend authentication failed, using Spotify profile only:', backendError.message);

@@ -1,317 +1,306 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const User = require('../models/User');
+const sqliteDB = require('../config/sqlite');
+const { authenticateToken } = require('../middleware/auth');
+const { validateFriendRequest, validateUserId } = require('../middleware/validation');
 
-// GET /api/friends - Get user's friends list
-router.get('/', auth, async (req, res) => {
+// Get user's friends list with compatibility scores
+router.get('/', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.userId)
-      .populate('friends.userId', 'displayName profileImage spotifyId country')
-      .select('friends');
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const friends = user.friends
-      .filter(friend => friend.status === 'accepted')
-      .map(friend => ({
-        id: friend.userId._id,
-        displayName: friend.userId.displayName,
-        profileImage: friend.userId.profileImage,
-        spotifyId: friend.userId.spotifyId,
-        country: friend.userId.country,
-        addedAt: friend.addedAt
-      }));
+    const friends = sqliteDB.getFriendsWithCompatibility(req.user.userId);
 
     res.json({
       success: true,
-      friends,
-      count: friends.length
+      friends: friends.map(friend => ({
+        id: friend.id,
+        spotifyId: friend.spotifyId,
+        displayName: friend.displayName,
+        profileImage: friend.profileImage,
+        country: friend.country,
+        friendshipDate: friend.friendshipDate,
+        compatibility: friend.compatibility,
+        // Only include music stats if privacy allows
+        musicStats: friend.privacy?.showTopTracks ? friend.musicStats : null
+      }))
     });
-
   } catch (error) {
     console.error('Get friends error:', error);
-    res.status(500).json({ 
-      message: 'Failed to get friends list',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get friends list'
     });
   }
 });
 
-// POST /api/friends/request/:userId - Send friend request
-router.post('/request/:userId', auth, async (req, res) => {
+// Search for users
+router.get('/search', authenticateToken, async (req, res) => {
   try {
-    const { userId: targetUserId } = req.params;
-    const currentUserId = req.userId;
+    const { q: query, limit = 20 } = req.query;
 
-    if (currentUserId === targetUserId) {
-      return res.status(400).json({ message: 'Cannot send friend request to yourself' });
-    }
-
-    // Check if target user exists and allows friend requests
-    const targetUser = await User.findById(targetUserId);
-    if (!targetUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (!targetUser.privacy.allowFriendRequests) {
-      return res.status(403).json({ message: 'User does not accept friend requests' });
-    }
-
-    // Check if already friends
-    const currentUser = await User.findById(currentUserId);
-    const isAlreadyFriend = currentUser.friends.some(
-      friend => friend.userId.toString() === targetUserId && friend.status === 'accepted'
-    );
-
-    if (isAlreadyFriend) {
-      return res.status(400).json({ message: 'Already friends with this user' });
-    }
-
-    // Check if request already sent
-    const requestAlreadySent = currentUser.friendRequests.sent.some(
-      request => request.userId.toString() === targetUserId
-    );
-
-    if (requestAlreadySent) {
-      return res.status(400).json({ message: 'Friend request already sent' });
-    }
-
-    // Check if there's a pending request from target user
-    const pendingRequest = currentUser.friendRequests.received.some(
-      request => request.userId.toString() === targetUserId
-    );
-
-    if (pendingRequest) {
-      return res.status(400).json({ 
-        message: 'This user has already sent you a friend request. Check your pending requests.' 
+    if (!query || query.trim().length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query must be at least 2 characters long'
       });
     }
 
-    // Add to sender's sent requests
-    currentUser.friendRequests.sent.push({
-      userId: targetUserId,
-      sentAt: new Date()
-    });
-
-    // Add to receiver's received requests
-    targetUser.friendRequests.received.push({
-      userId: currentUserId,
-      receivedAt: new Date()
-    });
-
-    await Promise.all([currentUser.save(), targetUser.save()]);
+    const users = sqliteDB.searchUsers(query.trim(), req.user.userId, parseInt(limit));
 
     res.json({
       success: true,
-      message: 'Friend request sent successfully'
+      users: users.map(user => ({
+        id: user.id,
+        spotifyId: user.spotifyId,
+        displayName: user.displayName,
+        profileImage: user.profileImage,
+        country: user.country,
+        relationshipStatus: user.relationshipStatus
+      }))
     });
+  } catch (error) {
+    console.error('Search users error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to search users'
+    });
+  }
+});
 
+// Get pending friend requests (received)
+router.get('/requests/pending', authenticateToken, async (req, res) => {
+  try {
+    const requests = sqliteDB.getPendingFriendRequests(req.user.userId);
+
+    res.json({
+      success: true,
+      requests: requests.map(request => ({
+        id: request.id,
+        sender: {
+          id: request.sender_id,
+          spotifyId: request.spotify_id,
+          displayName: request.display_name,
+          profileImage: request.profile_image
+        },
+        sentAt: request.sent_at
+      }))
+    });
+  } catch (error) {
+    console.error('Get pending requests error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get pending requests'
+    });
+  }
+});
+
+// Send friend request
+router.post('/request', authenticateToken, validateFriendRequest, async (req, res) => {
+  try {
+    const { userId: receiverId } = req.body;
+    const senderId = req.user.userId;
+
+    // Check if trying to send request to self
+    if (senderId === receiverId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot send friend request to yourself'
+      });
+    }
+
+    // Check if users are already friends
+    if (sqliteDB.checkFriendship(senderId, receiverId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are already friends with this user'
+      });
+    }
+
+    // Check if request already exists
+    const existingStatus = sqliteDB.getFriendRequestStatus(senderId, receiverId);
+    if (existingStatus === 'pending') {
+      return res.status(400).json({
+        success: false,
+        message: 'Friend request already sent'
+      });
+    }
+
+    const requestId = sqliteDB.sendFriendRequest(senderId, receiverId);
+
+    res.json({
+      success: true,
+      message: 'Friend request sent successfully',
+      requestId
+    });
   } catch (error) {
     console.error('Send friend request error:', error);
-    res.status(500).json({ 
-      message: 'Failed to send friend request',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    if (error.message === 'Friend request already exists') {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send friend request'
     });
   }
 });
 
-// GET /api/friends/requests - Get pending friend requests
-router.get('/requests', auth, async (req, res) => {
+// Get sent friend requests
+router.get('/requests/sent', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.userId)
-      .populate('friendRequests.received.userId', 'displayName profileImage spotifyId country')
-      .populate('friendRequests.sent.userId', 'displayName profileImage spotifyId country')
-      .select('friendRequests');
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const received = user.friendRequests.received.map(request => ({
-      id: request.userId._id,
-      displayName: request.userId.displayName,
-      profileImage: request.userId.profileImage,
-      spotifyId: request.userId.spotifyId,
-      country: request.userId.country,
-      receivedAt: request.receivedAt
-    }));
-
-    const sent = user.friendRequests.sent.map(request => ({
-      id: request.userId._id,
-      displayName: request.userId.displayName,
-      profileImage: request.userId.profileImage,
-      spotifyId: request.userId.spotifyId,
-      country: request.userId.country,
-      sentAt: request.sentAt
-    }));
+    const requests = sqliteDB.getSentFriendRequests(req.user.userId);
 
     res.json({
       success: true,
-      requests: {
-        received,
-        sent
-      },
-      counts: {
-        received: received.length,
-        sent: sent.length
+      requests: requests.map(request => ({
+        id: request.id,
+        receiver: {
+          id: request.receiver_id,
+          spotifyId: request.spotify_id,
+          displayName: request.display_name,
+          profileImage: request.profile_image
+        },
+        sentAt: request.sent_at
+      }))
+    });
+  } catch (error) {
+    console.error('Get sent requests error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get sent requests'
+    });
+  }
+});
+
+// Accept friend request
+router.post('/request/:requestId/accept', authenticateToken, async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const userId = req.user.userId;
+
+    const request = sqliteDB.acceptFriendRequest(parseInt(requestId), userId);
+
+    res.json({
+      success: true,
+      message: 'Friend request accepted',
+      newFriend: {
+        id: request.sender_id
       }
     });
-
-  } catch (error) {
-    console.error('Get friend requests error:', error);
-    res.status(500).json({ 
-      message: 'Failed to get friend requests',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
-    });
-  }
-});
-
-// POST /api/friends/accept/:userId - Accept friend request
-router.post('/accept/:userId', auth, async (req, res) => {
-  try {
-    const { userId: senderUserId } = req.params;
-    const currentUserId = req.userId;
-
-    const currentUser = await User.findById(currentUserId);
-    const senderUser = await User.findById(senderUserId);
-
-    if (!currentUser || !senderUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Check if there's a pending request
-    const requestIndex = currentUser.friendRequests.received.findIndex(
-      request => request.userId.toString() === senderUserId
-    );
-
-    if (requestIndex === -1) {
-      return res.status(400).json({ message: 'No pending friend request from this user' });
-    }
-
-    // Remove from both users' friend requests
-    currentUser.friendRequests.received.splice(requestIndex, 1);
-    
-    const sentRequestIndex = senderUser.friendRequests.sent.findIndex(
-      request => request.userId.toString() === currentUserId
-    );
-    if (sentRequestIndex !== -1) {
-      senderUser.friendRequests.sent.splice(sentRequestIndex, 1);
-    }
-
-    // Add to both users' friends list
-    currentUser.friends.push({
-      userId: senderUserId,
-      addedAt: new Date(),
-      status: 'accepted'
-    });
-
-    senderUser.friends.push({
-      userId: currentUserId,
-      addedAt: new Date(),
-      status: 'accepted'
-    });
-
-    await Promise.all([currentUser.save(), senderUser.save()]);
-
-    res.json({
-      success: true,
-      message: 'Friend request accepted successfully'
-    });
-
   } catch (error) {
     console.error('Accept friend request error:', error);
-    res.status(500).json({ 
-      message: 'Failed to accept friend request',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    if (error.message === 'Friend request not found or already processed') {
+      return res.status(404).json({
+        success: false,
+        message: error.message
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: 'Failed to accept friend request'
     });
   }
 });
 
-// DELETE /api/friends/reject/:userId - Reject friend request
-router.delete('/reject/:userId', auth, async (req, res) => {
+// Decline friend request
+router.post('/request/:requestId/decline', authenticateToken, async (req, res) => {
   try {
-    const { userId: senderUserId } = req.params;
-    const currentUserId = req.userId;
+    const { requestId } = req.params;
+    const userId = req.user.userId;
 
-    const currentUser = await User.findById(currentUserId);
-    const senderUser = await User.findById(senderUserId);
-
-    if (!currentUser || !senderUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Remove from received requests
-    const requestIndex = currentUser.friendRequests.received.findIndex(
-      request => request.userId.toString() === senderUserId
-    );
-
-    if (requestIndex === -1) {
-      return res.status(400).json({ message: 'No pending friend request from this user' });
-    }
-
-    currentUser.friendRequests.received.splice(requestIndex, 1);
-
-    // Remove from sender's sent requests
-    const sentRequestIndex = senderUser.friendRequests.sent.findIndex(
-      request => request.userId.toString() === currentUserId
-    );
-    if (sentRequestIndex !== -1) {
-      senderUser.friendRequests.sent.splice(sentRequestIndex, 1);
-    }
-
-    await Promise.all([currentUser.save(), senderUser.save()]);
+    sqliteDB.declineFriendRequest(parseInt(requestId), userId);
 
     res.json({
       success: true,
-      message: 'Friend request rejected successfully'
+      message: 'Friend request declined'
     });
-
   } catch (error) {
-    console.error('Reject friend request error:', error);
-    res.status(500).json({ 
-      message: 'Failed to reject friend request',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    console.error('Decline friend request error:', error);
+    if (error.message === 'Friend request not found or already processed') {
+      return res.status(404).json({
+        success: false,
+        message: error.message
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: 'Failed to decline friend request'
     });
   }
 });
 
-// DELETE /api/friends/:userId - Remove friend
-router.delete('/:userId', auth, async (req, res) => {
+// Remove friend
+router.delete('/:friendId', authenticateToken, validateUserId, async (req, res) => {
   try {
-    const { userId: friendUserId } = req.params;
-    const currentUserId = req.userId;
+    const { friendId } = req.params;
+    const userId = req.user.userId;
 
-    const currentUser = await User.findById(currentUserId);
-    const friendUser = await User.findById(friendUserId);
-
-    if (!currentUser || !friendUser) {
-      return res.status(404).json({ message: 'User not found' });
+    // Check if they are actually friends
+    if (!sqliteDB.checkFriendship(userId, parseInt(friendId))) {
+      return res.status(404).json({
+        success: false,
+        message: 'You are not friends with this user'
+      });
     }
 
-    // Remove from both users' friends list
-    currentUser.friends = currentUser.friends.filter(
-      friend => friend.userId.toString() !== friendUserId
-    );
-
-    friendUser.friends = friendUser.friends.filter(
-      friend => friend.userId.toString() !== currentUserId
-    );
-
-    await Promise.all([currentUser.save(), friendUser.save()]);
+    sqliteDB.removeFriend(userId, parseInt(friendId));
 
     res.json({
       success: true,
       message: 'Friend removed successfully'
     });
-
   } catch (error) {
     console.error('Remove friend error:', error);
-    res.status(500).json({ 
-      message: 'Failed to remove friend',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
+    res.status(500).json({
+      success: false,
+      message: 'Failed to remove friend'
+    });
+  }
+});
+
+// Get friend profile with compatibility
+router.get('/:friendId/profile', authenticateToken, async (req, res) => {
+  try {
+    const { friendId } = req.params;
+    const userId = req.user.userId;
+
+    // Check if they are friends
+    if (!sqliteDB.checkFriendship(userId, parseInt(friendId))) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only view profiles of your friends'
+      });
+    }
+
+    const friend = sqliteDB.getUserById(parseInt(friendId));
+    if (!friend) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const compatibility = sqliteDB.calculateMusicCompatibility(userId, parseInt(friendId));
+
+    res.json({
+      success: true,
+      profile: {
+        id: friend.id,
+        spotifyId: friend.spotifyId,
+        displayName: friend.displayName,
+        profileImage: friend.profileImage,
+        country: friend.country,
+        // Only include music stats if privacy allows
+        musicStats: friend.privacy?.showTopTracks ? friend.musicStats : null,
+        compatibility
+      }
+    });
+  } catch (error) {
+    console.error('Get friend profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get friend profile'
     });
   }
 });

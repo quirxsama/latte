@@ -82,10 +82,19 @@ class SpotifyAuthService {
 
   // Handle callback and exchange code for token
   async handleCallback(code, state) {
-    console.log('🔄 Starting callback handling...');
-    console.log('📥 Received parameters:', { code: code?.substring(0, 10) + '...', state });
+    // Prevent duplicate processing
+    if (this.isProcessingCallback) {
+      console.log('⚠️ Callback already being processed, skipping...');
+      return false;
+    }
 
-    const storedState = localStorage.getItem('spotify_state');
+    this.isProcessingCallback = true;
+
+    try {
+      console.log('🔄 Starting callback handling...');
+      console.log('📥 Received parameters:', { code: code?.substring(0, 10) + '...', state });
+
+      const storedState = localStorage.getItem('spotify_state');
     let codeVerifier = localStorage.getItem('spotify_code_verifier');
 
     // If not found in localStorage, try sessionStorage backup
@@ -123,17 +132,16 @@ class SpotifyAuthService {
       throw new Error('Code verifier not found. Please try logging in again.');
     }
 
-    console.log('✅ Code verifier found, proceeding with token exchange...');
+      console.log('✅ Code verifier found, proceeding with token exchange...');
 
-    const params = new URLSearchParams({
-      grant_type: 'authorization_code',
-      code: code,
-      redirect_uri: SPOTIFY_CONFIG.REDIRECT_URI,
-      client_id: SPOTIFY_CONFIG.CLIENT_ID,
-      code_verifier: codeVerifier,
-    });
+      const params = new URLSearchParams({
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: SPOTIFY_CONFIG.REDIRECT_URI,
+        client_id: SPOTIFY_CONFIG.CLIENT_ID,
+        code_verifier: codeVerifier,
+      });
 
-    try {
       console.log('Token exchange request:', {
         url: SPOTIFY_ENDPOINTS.TOKEN,
         params: Object.fromEntries(params.entries())
@@ -161,7 +169,7 @@ class SpotifyAuthService {
 
       const data = await response.json();
       this.setTokens(data);
-      
+
       // Clean up stored values
       localStorage.removeItem('spotify_code_verifier');
       localStorage.removeItem('spotify_state');
@@ -173,10 +181,12 @@ class SpotifyAuthService {
 
       console.log('🧹 Cleaned up auth storage after successful token exchange');
 
-      return data;
+      return true; // Return success
     } catch (error) {
       console.error('Error exchanging code for token:', error);
-      throw error;
+      return false; // Return failure instead of throwing
+    } finally {
+      this.isProcessingCallback = false;
     }
   }
 

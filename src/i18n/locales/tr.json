@@ -11,6 +11,8 @@
     "previous": "Önceki",
     "search": "Ara",
     "filter": "Filtrele",
+    "saving": "Kaydediliyor...",
+    "hide": "Gizle",
     "all": "Tümü",
     "none": "Hiçbiri",
     "yes": "Evet",
@@ -212,6 +214,50 @@
       "logoutButton": "Çıkış Yap"
     }
   },
+
+  "privacy": {
+    "title": "Gizlilik Ayarları",
+    "description": "Müzik verilerinizi kimin görebileceğini ve sizinle nasıl etkileşim kurabileceğini kontrol edin",
+    "allowComparison": "Müzik Karşılaştırmasına İzin Ver",
+    "allowComparisonDesc": "Diğer kullanıcıların müzik zevkinizi sizinkiyle karşılaştırmasına izin verin",
+    "showProfile": "Profili Göster",
+    "showProfileDesc": "Profilinizi arama sonuçlarında görünür yapın",
+    "showTopTracks": "En Çok Dinlenen Şarkıları Arkadaşlara Göster",
+    "showTopTracksDesc": "Arkadaşlarınızın en çok dinlediğiniz şarkıları görmesine izin verin",
+    "showTopArtists": "En Sevilen Sanatçıları Arkadaşlara Göster",
+    "showTopArtistsDesc": "Arkadaşlarınızın favori sanatçılarınızı görmesine izin verin",
+    "allowFriendRequests": "Arkadaşlık İsteklerine İzin Ver",
+    "allowFriendRequestsDesc": "Diğer kullanıcıların size arkadaşlık isteği göndermesine izin verin",
+    "saved": "Gizlilik ayarları başarıyla kaydedildi",
+    "error": "Gizlilik ayarları kaydedilemedi"
+  },
+
+  "friends": {
+    "title": "Arkadaşlar",
+    "description": "Arkadaşlarınızı yönetin ve yeni müzik bağlantıları keşfedin",
+    "searchPlaceholder": "Kullanıcı ara...",
+    "noFriends": "Henüz arkadaşınız yok",
+    "noRequests": "Bekleyen arkadaşlık isteği yok",
+    "sendRequest": "İstek Gönder",
+    "requestSent": "İstek Gönderildi",
+    "accept": "Kabul Et",
+    "decline": "Reddet",
+    "remove": "Arkadaşı Kaldır",
+    "compatibility": "Müzik Uyumluluğu",
+    "sharedArtists": "Ortak Sanatçılar",
+    "sharedTracks": "Ortak Şarkılar",
+    "sharedGenres": "Ortak Türler",
+    "friendRequests": "Arkadaşlık İstekleri",
+    "sentRequests": "Gönderilen İstekler",
+    "receivedRequests": "Alınan İstekler",
+    "viewProfile": "Profili Görüntüle",
+    "requestAccepted": "Arkadaşlık isteği kabul edildi",
+    "requestDeclined": "Arkadaşlık isteği reddedildi",
+    "requestSentSuccess": "Arkadaşlık isteği gönderildi",
+    "friendRemoved": "Arkadaş kaldırıldı",
+    "error": "Bir hata oluştu"
+  },
+
   "player": {
     "play": "Çal",
     "pause": "Duraklat",
