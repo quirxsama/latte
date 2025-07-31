@@ -7,7 +7,7 @@ const { validateFriendRequest, validateUserId } = require('../middleware/validat
 // Get user's friends list with compatibility scores
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const friends = sqliteDB.getFriendsWithCompatibility(req.user.userId);
+    const friends = sqliteDB.getFriendsWithCompatibility(req.userId);
 
     res.json({
       success: true,
@@ -44,7 +44,7 @@ router.get('/search', authenticateToken, async (req, res) => {
       });
     }
 
-    const users = sqliteDB.searchUsers(query.trim(), req.user.userId, parseInt(limit));
+    const users = sqliteDB.searchUsers(query.trim(), req.userId, parseInt(limit));
 
     res.json({
       success: true,
@@ -69,7 +69,7 @@ router.get('/search', authenticateToken, async (req, res) => {
 // Get pending friend requests (received)
 router.get('/requests/pending', authenticateToken, async (req, res) => {
   try {
-    const requests = sqliteDB.getPendingFriendRequests(req.user.userId);
+    const requests = sqliteDB.getPendingFriendRequests(req.userId);
 
     res.json({
       success: true,
@@ -97,7 +97,7 @@ router.get('/requests/pending', authenticateToken, async (req, res) => {
 router.post('/request', authenticateToken, validateFriendRequest, async (req, res) => {
   try {
     const { userId: receiverId } = req.body;
-    const senderId = req.user.userId;
+    const senderId = req.userId;
 
     // Check if trying to send request to self
     if (senderId === receiverId) {
@@ -149,7 +149,7 @@ router.post('/request', authenticateToken, validateFriendRequest, async (req, re
 // Get sent friend requests
 router.get('/requests/sent', authenticateToken, async (req, res) => {
   try {
-    const requests = sqliteDB.getSentFriendRequests(req.user.userId);
+    const requests = sqliteDB.getSentFriendRequests(req.userId);
 
     res.json({
       success: true,
@@ -177,7 +177,7 @@ router.get('/requests/sent', authenticateToken, async (req, res) => {
 router.post('/request/:requestId/accept', authenticateToken, async (req, res) => {
   try {
     const { requestId } = req.params;
-    const userId = req.user.userId;
+    const userId = req.userId;
 
     const request = sqliteDB.acceptFriendRequest(parseInt(requestId), userId);
 
@@ -207,7 +207,7 @@ router.post('/request/:requestId/accept', authenticateToken, async (req, res) =>
 router.post('/request/:requestId/decline', authenticateToken, async (req, res) => {
   try {
     const { requestId } = req.params;
-    const userId = req.user.userId;
+    const userId = req.userId;
 
     sqliteDB.declineFriendRequest(parseInt(requestId), userId);
 
@@ -234,7 +234,7 @@ router.post('/request/:requestId/decline', authenticateToken, async (req, res) =
 router.delete('/:friendId', authenticateToken, validateUserId, async (req, res) => {
   try {
     const { friendId } = req.params;
-    const userId = req.user.userId;
+    const userId = req.userId;
 
     // Check if they are actually friends
     if (!sqliteDB.checkFriendship(userId, parseInt(friendId))) {
@@ -263,7 +263,7 @@ router.delete('/:friendId', authenticateToken, validateUserId, async (req, res) 
 router.get('/:friendId/profile', authenticateToken, async (req, res) => {
   try {
     const { friendId } = req.params;
-    const userId = req.user.userId;
+    const userId = req.userId;
 
     // Check if they are friends
     if (!sqliteDB.checkFriendship(userId, parseInt(friendId))) {

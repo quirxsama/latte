@@ -8,6 +8,7 @@ import LoginPage from './components/common/LoginPage';
 import HomePage from './pages/HomePage';
 import AccountPage from './pages/AccountPage';
 import FriendsPage from './pages/FriendsPage';
+import FriendProfilePage from './pages/FriendProfilePage';
 import CallbackPage from './pages/CallbackPage';
 import LandingPage from './pages/LandingPage';
 import AuthTestPage from './pages/AuthTestPage';
@@ -94,6 +95,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <FriendsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user/:userId"
+              element={
+                <ProtectedRoute>
+                  <FriendProfilePage />
                 </ProtectedRoute>
               }
             />

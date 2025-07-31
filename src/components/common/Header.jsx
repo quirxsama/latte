@@ -359,8 +359,6 @@ const Header = () => {
           Latte
         </Logo>
 
-
-
         <UserSection>
 
           {isAuthenticated && user ? (
@@ -392,6 +390,12 @@ const Header = () => {
                 </UserInfo>
 
                 <AccountMenu $isOpen={isAccountMenuOpen}>
+                  <AccountMenuItem onClick={() => {
+                    setIsAccountMenuOpen(false);
+                    navigate('/friends');
+                  }}>
+                    👥 Friends
+                  </AccountMenuItem>
                   <AccountMenuItem onClick={() => {
                     setIsAccountMenuOpen(false);
                     navigate('/account');

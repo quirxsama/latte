@@ -223,6 +223,25 @@ class SQLiteDB {
     return this.getUserById(id);
   }
 
+  updateUserPrivacySettings(userId, privacySettings) {
+    const stmt = this.db.prepare(`
+      UPDATE users SET privacy_settings = ?, updated_at = ? WHERE id = ?
+    `);
+
+    stmt.run(privacySettings, new Date().toISOString(), userId);
+    return this.getUserById(userId);
+  }
+
+  getFriendship(userId1, userId2) {
+    const stmt = this.db.prepare(`
+      SELECT * FROM friends
+      WHERE (user_id = ? AND friend_id = ? AND status = 'accepted')
+         OR (user_id = ? AND friend_id = ? AND status = 'accepted')
+    `);
+
+    return stmt.get(userId1, userId2, userId2, userId1);
+  }
+
   getAllUsers() {
     const stmt = this.db.prepare('SELECT * FROM users');
     const users = stmt.all();

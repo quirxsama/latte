@@ -47,6 +47,9 @@ class ApiService {
       if (response.data.token) {
         localStorage.setItem('latte_auth_token', response.data.token);
       }
+      if (response.data.user?.id) {
+        localStorage.setItem('userId', response.data.user.id.toString());
+      }
       return response.data;
     } catch (error) {
       console.error('Spotify auth error:', error);
@@ -231,6 +234,86 @@ class ApiService {
     } catch (error) {
       console.error('Search users error:', error);
       throw new Error(error.response?.data?.message || 'Failed to search users');
+    }
+  }
+
+  async sendFriendRequest(userId) {
+    try {
+      const response = await this.api.post('/auth/send-friend-request', {
+        userId
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Send friend request error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to send friend request');
+    }
+  }
+
+  async getFriendRequests() {
+    try {
+      const response = await this.api.get('/auth/friend-requests');
+      return response.data;
+    } catch (error) {
+      console.error('Get friend requests error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to get friend requests');
+    }
+  }
+
+  async acceptFriendRequest(requestId) {
+    try {
+      const response = await this.api.post('/auth/accept-friend-request', {
+        requestId
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Accept friend request error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to accept friend request');
+    }
+  }
+
+  async rejectFriendRequest(requestId) {
+    try {
+      const response = await this.api.post('/auth/reject-friend-request', {
+        requestId
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Reject friend request error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to reject friend request');
+    }
+  }
+
+  // Get privacy settings
+  async getPrivacySettings() {
+    try {
+      const response = await this.api.get('/auth/privacy-settings');
+      return response.data;
+    } catch (error) {
+      console.error('Get privacy settings error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to get privacy settings');
+    }
+  }
+
+  // Update privacy settings
+  async updatePrivacySettings(privacySettings) {
+    try {
+      const response = await this.api.put('/auth/privacy-settings', { privacySettings });
+      return response.data;
+    } catch (error) {
+      console.error('Update privacy settings error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to update privacy settings');
+    }
+  }
+
+  // Get friend's profile
+  async getFriendProfile(userId) {
+    try {
+      const response = await this.api.get(`/auth/user/${userId}/profile`);
+      return response.data;
+    } catch (error) {
+      console.error('Get friend profile error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to get friend profile');
     }
   }
 

@@ -115,11 +115,15 @@ class SpotifyApiService {
         headers: error.config?.headers
       });
 
+      // Handle 403 errors gracefully for new accounts
+      if (error.response?.status === 403) {
+        console.warn('Spotify API access restricted for this account (normal for new accounts)');
+        return { items: [] }; // Return empty array instead of throwing
+      }
+
       // More specific error messages
       if (error.response?.status === 401) {
         throw new Error('Authentication failed. Please log in again.');
-      } else if (error.response?.status === 403) {
-        throw new Error('Access forbidden. This feature requires Spotify Premium or additional permissions.');
       } else if (error.response?.status === 429) {
         throw new Error('Too many requests. Please try again later.');
       } else if (error.response?.status === 404) {
@@ -368,6 +372,12 @@ class SpotifyApiService {
       const response = await this.api.get('/me/playlists', { params });
       return response.data;
     } catch (error) {
+      // Handle 403 errors gracefully for new accounts
+      if (error.response?.status === 403) {
+        console.warn('Spotify playlists access restricted for this account (normal for new accounts)');
+        return { items: [], total: 0 }; // Return empty array instead of throwing
+      }
+
       console.error('Error fetching current user playlists:', error);
       throw new Error('Failed to fetch current user playlists');
     }

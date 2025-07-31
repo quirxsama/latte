@@ -230,7 +230,7 @@ const searchUsers = async (req, res) => {
     const users = sqliteDB.searchUsers(query.trim(), 20);
 
     // Filter out current user and add relationship status
-    const currentUserId = req.userId || 0; // Default to 0 if no auth
+    const currentUserId = req.userId;
 
     const filteredUsers = users
       .filter(user => user.id !== currentUserId)
@@ -267,10 +267,252 @@ const searchUsers = async (req, res) => {
   }
 };
 
+// Send friend request
+const sendFriendRequest = async (req, res) => {
+  try {
+    const { userId } = req.body; // Target user's ID
+    const senderId = req.userId; // Current user's ID
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // Check if target user exists
+    const targetUser = sqliteDB.getUserById(userId);
+    if (!targetUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if they're already friends
+    const existingFriendship = sqliteDB.checkFriendship(senderId, userId);
+    if (existingFriendship) {
+      return res.status(400).json({ message: 'Already friends' });
+    }
+
+    // Check if there's already a pending request
+    const existingRequest = sqliteDB.getFriendRequestStatus(senderId, userId);
+    if (existingRequest) {
+      return res.status(400).json({ message: 'Friend request already sent' });
+    }
+
+    // Send friend request
+    sqliteDB.sendFriendRequest(senderId, userId);
+
+    res.json({
+      success: true,
+      message: 'Friend request sent successfully'
+    });
+
+  } catch (error) {
+    console.error('Send friend request error:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
+
+// Get friend requests
+const getFriendRequests = async (req, res) => {
+  try {
+    const userId = req.userId;
+    console.log(`🔍 Getting friend requests for user ID: ${userId}`);
+
+    const requests = sqliteDB.getPendingFriendRequests(userId);
+    console.log(`📬 Found ${requests ? requests.length : 0} pending requests:`, requests);
+
+    res.json({
+      success: true,
+      requests: requests || [],
+      count: requests ? requests.length : 0
+    });
+
+  } catch (error) {
+    console.error('Get friend requests error:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
+
+// Accept friend request
+const acceptFriendRequest = async (req, res) => {
+  try {
+    const { requestId } = req.body;
+    const userId = req.userId;
+
+    if (!requestId) {
+      return res.status(400).json({ message: 'Request ID is required' });
+    }
+
+    sqliteDB.acceptFriendRequest(requestId, userId);
+
+    res.json({
+      success: true,
+      message: 'Friend request accepted'
+    });
+
+  } catch (error) {
+    console.error('Accept friend request error:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
+
+// Reject friend request
+const rejectFriendRequest = async (req, res) => {
+  try {
+    const { requestId } = req.body;
+    const userId = req.userId;
+
+    if (!requestId) {
+      return res.status(400).json({ message: 'Request ID is required' });
+    }
+
+    sqliteDB.declineFriendRequest(requestId, userId);
+
+    res.json({
+      success: true,
+      message: 'Friend request rejected'
+    });
+
+  } catch (error) {
+    console.error('Reject friend request error:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
+
+// Get privacy settings
+const getPrivacySettings = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = sqliteDB.getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const privacySettings = user.privacy_settings ? JSON.parse(user.privacy_settings) : {
+      allowComparison: false,
+      showProfile: true,
+      showTopTracks: false,
+      showTopArtists: false,
+      allowFriendRequests: true
+    };
+
+    res.json({ success: true, privacySettings });
+  } catch (error) {
+    console.error('Get privacy settings error:', error);
+    res.status(500).json({ message: 'Failed to get privacy settings' });
+  }
+};
+
+// Update privacy settings
+const updatePrivacySettings = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { privacySettings } = req.body;
+
+    if (!privacySettings || typeof privacySettings !== 'object') {
+      return res.status(400).json({ message: 'Invalid privacy settings' });
+    }
+
+    // Ensure required fields exist
+    const updatedSettings = {
+      allowComparison: privacySettings.allowComparison || false,
+      showProfile: privacySettings.showProfile !== undefined ? privacySettings.showProfile : true,
+      showTopTracks: privacySettings.showTopTracks || false,
+      showTopArtists: privacySettings.showTopArtists || false,
+      allowFriendRequests: privacySettings.allowFriendRequests !== undefined ? privacySettings.allowFriendRequests : true
+    };
+
+    sqliteDB.updateUserPrivacySettings(userId, JSON.stringify(updatedSettings));
+
+    res.json({ success: true, message: 'Privacy settings updated successfully' });
+  } catch (error) {
+    console.error('Update privacy settings error:', error);
+    res.status(500).json({ message: 'Failed to update privacy settings' });
+  }
+};
+
+// Get friend's profile
+const getFriendProfile = async (req, res) => {
+  try {
+    const currentUserId = req.userId;
+    const { userId } = req.params;
+
+    console.log('🔍 getFriendProfile - currentUserId:', currentUserId);
+    console.log('🔍 getFriendProfile - requested userId:', userId);
+
+    // Try to get friend by userId first, then by id
+    let friend = sqliteDB.getUserByUserId(userId);
+    if (!friend && !isNaN(userId)) {
+      // If userId lookup failed and userId is numeric, try by id
+      friend = sqliteDB.getUserById(parseInt(userId));
+    }
+    console.log('🔍 getFriendProfile - found friend:', friend ? 'YES' : 'NO');
+    if (!friend) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if they are friends
+    const friendship = sqliteDB.getFriendship(currentUserId, friend.id);
+    if (!friendship) {
+      return res.status(403).json({ message: 'You are not friends with this user' });
+    }
+
+
+    // Check privacy settings
+    console.log('🔍 Friend object:', friend);
+    console.log('🔍 Friend privacy_settings (raw):', friend.privacy_settings);
+    console.log('🔍 Friend privacy (parsed):', friend.privacy);
+
+    const privacySettings = friend.privacy || {
+      showProfile: true
+    };
+
+    console.log('🔍 Final privacySettings:', privacySettings);
+
+    if (!privacySettings.showProfile) {
+      return res.status(403).json({ message: 'This user has disabled profile viewing' });
+    }
+
+    // Return friend's profile with music stats
+    const friendProfile = {
+      id: friend.id,
+      userId: friend.userId,
+      displayName: friend.displayName,
+      profileImage: friend.profileImage,
+      country: friend.country,
+      followers: friend.followers,
+      musicStats: friend.musicStats || {},
+      privacySettings: privacySettings
+    };
+
+    res.json({ success: true, profile: friendProfile });
+  } catch (error) {
+    console.error('Get friend profile error:', error);
+    res.status(500).json({ message: 'Failed to get friend profile' });
+  }
+};
+
 module.exports = {
   spotifyAuth,
   getProfile,
   updateProfile,
   updateMusicStats,
-  searchUsers
+  searchUsers,
+  sendFriendRequest,
+  getFriendRequests,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  getPrivacySettings,
+  updatePrivacySettings,
+  getFriendProfile
 };

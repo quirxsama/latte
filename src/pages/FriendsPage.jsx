@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import apiService from '../services/api';
 import Button from '../components/common/Button';
+import Header from '../components/common/Header';
 import { SPACING, BREAKPOINTS } from '../constants/themes';
 
 const PageContainer = styled.div`
@@ -16,7 +18,7 @@ const PageContainer = styled.div`
   }
 `;
 
-const Header = styled.div`
+const PageHeader = styled.div`
   text-align: center;
   margin-bottom: ${SPACING.XXL};
 `;
@@ -149,11 +151,21 @@ const FriendInfo = styled.div`
   flex: 1;
 `;
 
-const FriendName = styled.h4`
+const FriendName = styled.button`
+  background: none;
+  border: none;
   color: var(--color-text);
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 ${SPACING.XS} 0;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--color-primary);
+  }
 `;
 
 const FriendCountry = styled.p`
@@ -210,30 +222,7 @@ const ActionButtons = styled.div`
   gap: ${SPACING.SM};
 `;
 
-const SearchSection = styled.div`
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: ${SPACING.LG};
-  margin-bottom: ${SPACING.XL};
-  border: 1px solid var(--color-border);
-`;
 
-const SearchHeader = styled.div`
-  margin-bottom: ${SPACING.LG};
-`;
-
-const SearchTitle = styled.h3`
-  color: var(--color-text);
-  margin: 0 0 ${SPACING.XS} 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-`;
-
-const SearchDescription = styled.p`
-  color: var(--color-text-secondary);
-  margin: 0;
-  font-size: 0.9rem;
-`;
 
 const UserIdDisplay = styled.div`
   background: var(--color-background);
@@ -336,6 +325,7 @@ const UserIdSmall = styled.div`
 const FriendsPage = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('friends');
   const [searchQuery, setSearchQuery] = useState('');
   const [friends, setFriends] = useState([]);
@@ -364,6 +354,11 @@ const FriendsPage = () => {
     setLoading(true);
     try {
       const response = await apiService.getFriends();
+      console.log('🔍 Friends API response:', response);
+      console.log('🔍 Friends data:', response.friends);
+      if (response.friends && response.friends.length > 0) {
+        console.log('🔍 First friend object:', response.friends[0]);
+      }
       setFriends(response.friends || []);
     } catch (error) {
       console.error('Load friends error:', error);
@@ -375,7 +370,7 @@ const FriendsPage = () => {
   const loadFriendRequests = async () => {
     setLoading(true);
     try {
-      const response = await apiService.getPendingFriendRequests();
+      const response = await apiService.getFriendRequests();
       setFriendRequests(response.requests || []);
     } catch (error) {
       console.error('Load friend requests error:', error);
@@ -410,6 +405,64 @@ const FriendsPage = () => {
     }
   };
 
+  const handleAddFriend = async (userId) => {
+    try {
+      await apiService.sendFriendRequest(userId);
+
+      // Update the search results to reflect the new status
+      setSearchResults(prevResults =>
+        prevResults.map(user =>
+          user.id === userId
+            ? { ...user, relationshipStatus: 'pending' }
+            : user
+        )
+      );
+
+      // Show success message (you can add a toast notification here)
+      console.log('Friend request sent successfully!');
+
+    } catch (error) {
+      console.error('Add friend error:', error);
+      // Show error message (you can add a toast notification here)
+      alert(error.message);
+    }
+  };
+
+  const handleAcceptRequest = async (requestId) => {
+    try {
+      await apiService.acceptFriendRequest(requestId);
+
+      // Refresh friend requests list
+      loadFriendRequests();
+
+      // If friends tab is active, refresh friends list too
+      if (activeTab === 'friends') {
+        loadFriends();
+      }
+
+      console.log('Friend request accepted!');
+
+    } catch (error) {
+      console.error('Accept friend request error:', error);
+      alert(error.message);
+    }
+  };
+
+  const handleRejectRequest = async (requestId) => {
+    try {
+      await apiService.rejectFriendRequest(requestId);
+
+      // Refresh friend requests list
+      loadFriendRequests();
+
+      console.log('Friend request rejected!');
+
+    } catch (error) {
+      console.error('Reject friend request error:', error);
+      alert(error.message);
+    }
+  };
+
   const renderFriends = () => {
     if (loading) {
       return <LoadingContainer>{t('common.loading')}</LoadingContainer>;
@@ -437,7 +490,16 @@ const FriendsPage = () => {
                 alt={friend.displayName}
               />
               <FriendInfo>
-                <FriendName>{friend.displayName}</FriendName>
+                <FriendName onClick={() => {
+                  console.log('🔍 Clicking friend:', friend);
+                  console.log('🔍 Friend userId:', friend.userId);
+                  console.log('🔍 Friend id:', friend.id);
+                  // Geçici olarak id kullan eğer userId undefined ise
+                  const userIdToUse = friend.userId || friend.id;
+                  navigate(`/user/${userIdToUse}`);
+                }}>
+                  {friend.displayName}
+                </FriendName>
                 <FriendCountry>{friend.country}</FriendCountry>
               </FriendInfo>
             </FriendHeader>
@@ -471,11 +533,13 @@ const FriendsPage = () => {
   };
 
   return (
-    <PageContainer>
-      <Header>
-        <Title>{t('friends.title')}</Title>
-        <Description>{t('friends.description')}</Description>
-      </Header>
+    <>
+      <Header />
+      <PageContainer>
+        <PageHeader>
+          <Title>{t('friends.title')}</Title>
+          <Description>{t('friends.description')}</Description>
+        </PageHeader>
 
 
 
@@ -532,10 +596,52 @@ const FriendsPage = () => {
       <ContentContainer>
         {activeTab === 'friends' && renderFriends()}
         {activeTab === 'requests' && (
-          <EmptyState>
-            <EmptyIcon>📬</EmptyIcon>
-            <EmptyTitle>{t('friends.noRequests')}</EmptyTitle>
-          </EmptyState>
+          <>
+            {loading ? (
+              <LoadingContainer>Loading requests...</LoadingContainer>
+            ) : friendRequests.length > 0 ? (
+              <SearchResults>
+                {friendRequests.map((request) => (
+                  <SearchResultItem key={request.id}>
+                    <UserInfo>
+                      <UserAvatar
+                        src={request.profile_image || '/default-avatar.png'}
+                        alt={request.display_name}
+                      />
+                      <UserDetails>
+                        <UserName>{request.display_name}</UserName>
+                        <UserIdSmall>Sent {new Date(request.sent_at).toLocaleDateString()}</UserIdSmall>
+                      </UserDetails>
+                    </UserInfo>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <Button
+                        variant="primary"
+                        size="small"
+                        onClick={() => handleAcceptRequest(request.id)}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => handleRejectRequest(request.id)}
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                  </SearchResultItem>
+                ))}
+              </SearchResults>
+            ) : (
+              <EmptyState>
+                <EmptyIcon>📬</EmptyIcon>
+                <EmptyTitle>No Friend Requests</EmptyTitle>
+                <EmptyDescription>
+                  You don't have any pending friend requests
+                </EmptyDescription>
+              </EmptyState>
+            )}
+          </>
         )}
         {activeTab === 'search' && (
           <>
@@ -557,6 +663,7 @@ const FriendsPage = () => {
                       variant={user.relationshipStatus === 'friends' ? 'secondary' : 'primary'}
                       size="small"
                       disabled={user.relationshipStatus !== 'none'}
+                      onClick={() => user.relationshipStatus === 'none' && handleAddFriend(user.id)}
                     >
                       {user.relationshipStatus === 'friends' ? 'Friends' :
                        user.relationshipStatus === 'pending' ? 'Pending' : 'Add Friend'}
@@ -585,6 +692,7 @@ const FriendsPage = () => {
         )}
       </ContentContainer>
     </PageContainer>
+    </>
   );
 };
 

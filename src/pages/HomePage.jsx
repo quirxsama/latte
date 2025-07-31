@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { UI_CONFIG } from '../constants/spotify';
 import { useAuth } from '../contexts/AuthContext';
 import spotifyApi from '../services/spotifyApi';
+import apiService from '../services/api';
 import Header from '../components/common/Header';
 import TimeRangeFilter from '../components/common/TimeRangeFilter';
 import GenreFilter from '../components/genre/GenreFilter';
@@ -92,6 +93,28 @@ const HomePage = () => {
         setTracks(response.items);
         // Process genres when getting new tracks
         processGenres(response.items);
+
+        // Save music stats to backend (only on initial load)
+        try {
+          console.log('🎵 Starting music stats update...');
+
+          // Also get top artists
+          const artistsResponse = await spotifyApi.getTopArtists(apiTimeRange, 20);
+          console.log('🎵 Got top artists:', artistsResponse.items?.length || 0);
+
+          const musicData = {
+            topTracks: response.items,
+            topArtists: artistsResponse.items,
+            timeRange: apiTimeRange
+          };
+          console.log('🎵 Sending music data to backend:', musicData);
+
+          await apiService.updateMusicStats(musicData);
+          console.log('✅ Music stats updated successfully');
+        } catch (error) {
+          console.error('❌ Failed to update music stats:', error);
+          console.error('❌ Error details:', error.message);
+        }
       } else {
         const newTracks = [...tracks, ...response.items];
         setTracks(newTracks);

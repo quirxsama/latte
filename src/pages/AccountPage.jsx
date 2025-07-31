@@ -78,6 +78,23 @@ const ProfileEmail = styled.p`
   margin-bottom: ${UI_CONFIG.SPACING.MD};
 `;
 
+const ProfileUserId = styled.p`
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-family: monospace;
+  background: var(--color-background);
+  padding: ${UI_CONFIG.SPACING.SM};
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  margin-bottom: ${UI_CONFIG.SPACING.MD};
+  text-align: center;
+
+  strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+`;
+
 const ProfileStats = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -268,6 +285,11 @@ const AccountPage = () => {
             <ProfileEmail>
               {user?.email || (allowTestAccess ? 'test@example.com' : t('account.noEmail'))}
             </ProfileEmail>
+            {user?.userId && (
+              <ProfileUserId>
+                User ID: <strong>{user.userId}</strong>
+              </ProfileUserId>
+            )}
             
             {userStats && (
               <ProfileStats>

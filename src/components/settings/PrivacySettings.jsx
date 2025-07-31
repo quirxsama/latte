@@ -135,7 +135,7 @@ const Message = styled.div`
 
 const PrivacySettings = () => {
   const { t } = useTranslation();
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const [settings, setSettings] = useState({
     allowComparison: true,
     showProfile: true,
@@ -170,8 +170,7 @@ const PrivacySettings = () => {
     setMessage(null);
 
     try {
-      const updatedUser = await apiService.updatePrivacySettings(settings);
-      updateUser(updatedUser);
+      await apiService.updatePrivacySettings(settings);
       setMessage({ type: 'success', text: t('privacy.saved') });
     } catch (error) {
       console.error('Privacy settings update error:', error);
