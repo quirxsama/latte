@@ -105,7 +105,29 @@ class SpotifyApiService {
       return response.data;
     } catch (error) {
       console.error('Error fetching top tracks:', error);
-      throw new Error('Failed to fetch top tracks');
+      console.error('Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message,
+        url: error.config?.url,
+        headers: error.config?.headers
+      });
+
+      // More specific error messages
+      if (error.response?.status === 401) {
+        throw new Error('Authentication failed. Please log in again.');
+      } else if (error.response?.status === 403) {
+        throw new Error('Access forbidden. This feature requires Spotify Premium or additional permissions.');
+      } else if (error.response?.status === 429) {
+        throw new Error('Too many requests. Please try again later.');
+      } else if (error.response?.status === 404) {
+        throw new Error('Spotify API endpoint not found.');
+      } else if (!error.response) {
+        throw new Error('Network error. Please check your internet connection.');
+      }
+
+      throw new Error(`Failed to fetch top tracks: ${error.response?.status} - ${error.response?.data?.error?.message || error.message}`);
     }
   }
 

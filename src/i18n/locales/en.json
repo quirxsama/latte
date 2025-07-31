@@ -239,7 +239,11 @@
     "noPreview": "No preview available for this track!",
     "needMoreTracks": "Need at least 4 tracks to start the quiz!",
     "preparingQuiz": "Preparing your music quiz...",
-    "notEnoughTracks": "Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews."
+    "notEnoughTracks": "Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews.",
+    "errors": {
+      "notEnoughTracks": "Not enough tracks available for the quiz.",
+      "notEnoughTracksWithPreview": "Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews."
+    }
   },
   "player": {
     "play": "Play",

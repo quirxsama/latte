@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { UI_CONFIG } from '../constants/spotify';
 import { useAuth } from '../contexts/AuthContext';
 import spotifyApi from '../services/spotifyApi';
+import spotifyPlayer from '../services/spotifyPlayer';
 import Header from '../components/common/Header';
 import MusicQuiz from '../components/quiz/MusicQuiz';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -46,10 +48,13 @@ const ErrorMessage = styled.p`
 `;
 
 const QuizPage = () => {
-  const { isAuthenticated, user, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
+  const { isAuthenticated, user, loading: authLoading, accessToken } = useAuth();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [playerReady, setPlayerReady] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
 
   // Fetch tracks for quiz (mix of different time ranges for variety)
   const fetchQuizTracks = async () => {
@@ -57,11 +62,11 @@ const QuizPage = () => {
       setLoading(true);
       setError(null);
 
-      // Get tracks from different time periods for variety
+      // Get tracks from different time ranges for variety - fetch more to increase chances
       const [shortTerm, mediumTerm, longTerm] = await Promise.all([
-        spotifyApi.getTopTracks('short_term', 20, 0).catch(() => ({ items: [] })),
-        spotifyApi.getTopTracks('medium_term', 20, 0).catch(() => ({ items: [] })),
-        spotifyApi.getTopTracks('long_term', 20, 0).catch(() => ({ items: [] }))
+        spotifyApi.getTopTracks('short_term', 50, 0).catch(() => ({ items: [] })),
+        spotifyApi.getTopTracks('medium_term', 50, 0).catch(() => ({ items: [] })),
+        spotifyApi.getTopTracks('long_term', 50, 0).catch(() => ({ items: [] }))
       ]);
 
       // Combine and deduplicate tracks
@@ -71,20 +76,128 @@ const QuizPage = () => {
         ...longTerm.items
       ];
 
-      // Remove duplicates and filter tracks with preview URLs
+      // Remove duplicates first
       const uniqueTracks = allTracks.reduce((acc, track) => {
-        if (!acc.find(t => t.id === track.id) && track.preview_url) {
+        if (!acc.find(t => t.id === track.id)) {
           acc.push(track);
         }
         return acc;
       }, []);
 
-      if (uniqueTracks.length < 4) {
-        setError('Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews.');
-        return;
-      }
+      if (isPremium && playerReady) {
+        // Premium users can play any track
+        if (uniqueTracks.length < 4) {
+          setError(t('quiz.errors.notEnoughTracks', 'Not enough tracks available for the quiz.'));
+          return;
+        }
 
-      setTracks(uniqueTracks);
+        // Shuffle and take first 10 tracks for quiz
+        const shuffled = uniqueTracks.sort(() => 0.5 - Math.random());
+        setTracks(shuffled.slice(0, 10));
+      } else {
+        // Free users or Premium without player: Use tracks with preview URLs
+        const tracksWithPreview = uniqueTracks.filter(track => track.preview_url);
+
+        if (tracksWithPreview.length < 4) {
+          // If not enough preview tracks, try to get more from popular tracks
+          try {
+            console.log(`Only ${tracksWithPreview.length} tracks with preview found, fetching more...`);
+
+            // Get more tracks from different offsets
+            const [moreShort, moreMedium, moreLong] = await Promise.all([
+              spotifyApi.getTopTracks('short_term', 50, 50).catch(() => ({ items: [] })),
+              spotifyApi.getTopTracks('medium_term', 50, 50).catch(() => ({ items: [] })),
+              spotifyApi.getTopTracks('long_term', 50, 50).catch(() => ({ items: [] }))
+            ]);
+
+            const moreAllTracks = [
+              ...moreShort.items,
+              ...moreMedium.items,
+              ...moreLong.items
+            ];
+
+            // Add new tracks that aren't already in our list
+            const additionalTracks = moreAllTracks.filter(track =>
+              !uniqueTracks.find(t => t.id === track.id) && track.preview_url
+            );
+
+            const finalTracksWithPreview = [...tracksWithPreview, ...additionalTracks];
+
+            if (finalTracksWithPreview.length < 4) {
+              // Last resort: Try to get saved tracks (liked songs)
+              try {
+                console.log('Trying saved tracks as last resort...');
+                const savedTracks = await spotifyApi.api.get('/me/tracks', {
+                  params: { limit: 50 }
+                }).catch(() => ({ data: { items: [] } }));
+
+                const savedTracksWithPreview = savedTracks.data.items
+                  .map(item => item.track)
+                  .filter(track => track.preview_url && !finalTracksWithPreview.find(t => t.id === track.id));
+
+                const allAvailableTracks = [...finalTracksWithPreview, ...savedTracksWithPreview];
+
+                if (allAvailableTracks.length < 4) {
+                  // Final fallback: Use popular tracks from featured playlists
+                  try {
+                    console.log('Trying featured playlists as final fallback...');
+                    const featuredPlaylists = await spotifyApi.api.get('/browse/featured-playlists', {
+                      params: { limit: 5 }
+                    }).catch(() => ({ data: { playlists: { items: [] } } }));
+
+                    let fallbackTracks = [];
+
+                    // Get tracks from first featured playlist
+                    if (featuredPlaylists.data.playlists.items.length > 0) {
+                      const playlistId = featuredPlaylists.data.playlists.items[0].id;
+                      const playlistTracks = await spotifyApi.api.get(`/playlists/${playlistId}/tracks`, {
+                        params: { limit: 20 }
+                      }).catch(() => ({ data: { items: [] } }));
+
+                      fallbackTracks = playlistTracks.data.items
+                        .map(item => item.track)
+                        .filter(track => track && track.preview_url)
+                        .slice(0, 10);
+                    }
+
+                    if (fallbackTracks.length >= 4) {
+                      console.log(`Using ${fallbackTracks.length} tracks from featured playlist`);
+                      const shuffled = fallbackTracks.sort(() => 0.5 - Math.random());
+                      setTracks(shuffled.slice(0, Math.min(10, fallbackTracks.length)));
+                      return;
+                    }
+                  } catch (playlistError) {
+                    console.error('Error fetching featured playlists:', playlistError);
+                  }
+
+                  setError(t('quiz.errors.notEnoughTracksWithPreview', 'Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews.'));
+                  return;
+                }
+
+                // Use all available tracks
+                const shuffled = allAvailableTracks.sort(() => 0.5 - Math.random());
+                setTracks(shuffled.slice(0, Math.min(10, allAvailableTracks.length)));
+                return;
+              } catch (savedError) {
+                console.error('Error fetching saved tracks:', savedError);
+                setError(t('quiz.errors.notEnoughTracksWithPreview', 'Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews.'));
+                return;
+              }
+            }
+
+            // Shuffle and take first 10 tracks for quiz
+            const shuffled = finalTracksWithPreview.sort(() => 0.5 - Math.random());
+            setTracks(shuffled.slice(0, 10));
+          } catch (error) {
+            setError(t('quiz.errors.notEnoughTracksWithPreview', 'Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews.'));
+            return;
+          }
+        } else {
+          // Shuffle and take first 10 tracks for quiz
+          const shuffled = tracksWithPreview.sort(() => 0.5 - Math.random());
+          setTracks(shuffled.slice(0, 10));
+        }
+      }
 
     } catch (err) {
       console.error('Error fetching quiz tracks:', err);
@@ -93,6 +206,29 @@ const QuizPage = () => {
       setLoading(false);
     }
   };
+
+  // Initialize Spotify Player
+  useEffect(() => {
+    const initializePlayer = async () => {
+      if (isAuthenticated && accessToken) {
+        try {
+          // Check if user has Spotify Premium
+          const premium = await spotifyPlayer.checkPremiumStatus(accessToken);
+          setIsPremium(premium);
+
+          if (premium) {
+            // Initialize player for Premium users
+            await spotifyPlayer.initialize(accessToken);
+            setPlayerReady(true);
+          }
+        } catch (error) {
+          console.error('Error initializing player:', error);
+        }
+      }
+    };
+
+    initializePlayer();
+  }, [isAuthenticated, accessToken]);
 
   // Load tracks when authenticated or in test mode
   useEffect(() => {
@@ -165,6 +301,7 @@ const QuizPage = () => {
           }
         ]);
         setLoading(false);
+        setError(null);
       } else {
         fetchQuizTracks();
       }
@@ -220,7 +357,13 @@ const QuizPage = () => {
             <ErrorMessage>{error}</ErrorMessage>
           </ErrorContainer>
         ) : (
-          <MusicQuiz tracks={tracks} />
+          <MusicQuiz
+          tracks={tracks}
+          spotifyPlayer={spotifyPlayer}
+          accessToken={accessToken}
+          isPremium={isPremium}
+          playerReady={playerReady}
+        />
         )}
       </MainContent>
     </PageContainer>

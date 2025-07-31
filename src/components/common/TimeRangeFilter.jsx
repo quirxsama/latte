@@ -34,11 +34,11 @@ const FilterTabs = styled.div`
 `;
 
 const FilterTab = styled.button`
-  background: ${props => props.active ?
+  background: ${props => props.$active ?
     'var(--color-gradient-accent)' :
     'transparent'
   };
-  color: ${props => props.active ?
+  color: ${props => props.$active ?
     'var(--color-background)' :
     'var(--color-text-secondary)'
   };
@@ -54,11 +54,11 @@ const FilterTab = styled.button`
   overflow: hidden;
 
   &:hover {
-    color: ${props => props.active ?
+    color: ${props => props.$active ?
       'var(--color-background)' :
       'var(--color-text)'
     };
-    background: ${props => props.active ?
+    background: ${props => props.$active ?
       'var(--color-gradient-accent)' :
       'var(--color-surface-hover)'
     };
@@ -161,7 +161,7 @@ const TimeRangeFilter = ({
           {getTimeRanges().map((range) => (
             <FilterTab
               key={range.key}
-              active={activeRange === range.key}
+              $active={activeRange === range.key}
               onClick={() => handleRangeChange(range.key)}
               title={range.description}
             >

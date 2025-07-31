@@ -239,7 +239,11 @@
     "noPreview": "Bu şarkı için önizleme mevcut değil!",
     "needMoreTracks": "Yarışmayı başlatmak için en az 4 şarkı gerekli!",
     "preparingQuiz": "Müzik yarışmanız hazırlanıyor...",
-    "notEnoughTracks": "Yarışma için yeterli önizlemeli şarkı yok. Ses önizlemeli en az 4 şarkıya ihtiyacınız var."
+    "notEnoughTracks": "Yarışma için yeterli önizlemeli şarkı yok. Ses önizlemeli en az 4 şarkıya ihtiyacınız var.",
+    "errors": {
+      "notEnoughTracks": "Yarışma için yeterli şarkı yok.",
+      "notEnoughTracksWithPreview": "Yarışma için yeterli önizlemeli şarkı yok. Ses önizlemeli en az 4 şarkıya ihtiyacınız var."
+    }
   },
   "player": {
     "play": "Çal",

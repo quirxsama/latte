@@ -69,9 +69,9 @@ const LanguageOption = styled.button`
   background: none;
   border: none;
   padding: 8px 16px;
-  color: ${props => props.active ? 'var(--color-primary)' : 'var(--color-text)'};
+  color: ${props => props.$active ? 'var(--color-primary)' : 'var(--color-text)'};
   font-size: 0.9rem;
-  font-weight: ${props => props.active ? 600 : 500};
+  font-weight: ${props => props.$active ? 600 : 500};
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -170,7 +170,7 @@ const LanguageSwitcher = ({ className }) => {
         {languages.map((language) => (
           <LanguageOption
             key={language.code}
-            active={language.code === i18n.language}
+            $active={language.code === i18n.language}
             onClick={() => handleLanguageChange(language.code)}
             title={`Switch to ${language.nativeName}`}
           >

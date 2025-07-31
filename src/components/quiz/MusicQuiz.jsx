@@ -13,6 +13,11 @@ const QuizContainer = styled.div`
 `;
 
 const QuizHeader = styled.div`
+  margin-bottom: ${UI_CONFIG.SPACING.XL};
+`;
+
+const ListHeader = styled.div`
+  text-align: center;
   margin-bottom: ${UI_CONFIG.SPACING.XXL};
 `;
 
@@ -108,7 +113,7 @@ const ProgressFill = styled.div`
   height: 100%;
   background: linear-gradient(90deg, ${UI_CONFIG.COLORS.SPOTIFY_GREEN}, #1ed760);
   border-radius: 3px;
-  width: ${props => props.progress}%;
+  width: ${props => props.$progress}%;
   transition: width 0.1s linear;
 `;
 
@@ -414,7 +419,7 @@ const MusicQuiz = ({ tracks = [] }) => {
               {isPlaying ? '⏸️' : '▶️'}
             </PlayButton>
             <ProgressBar>
-              <ProgressFill progress={progress} />
+              <ProgressFill $progress={progress} />
             </ProgressBar>
             <p style={{ color: UI_CONFIG.COLORS.SPOTIFY_LIGHT_GRAY, fontSize: '0.9rem' }}>
               {isPlaying ? 'Playing...' : 'Click to play 5-second snippet'}
