@@ -108,7 +108,13 @@ class SpotifyAuthService {
     if (state !== storedState) {
       console.error('State mismatch:', { stored: storedState, received: state });
       console.warn('State mismatch detected - this could be a security issue');
-      // Don't clear code_verifier yet, we still need it for token exchange
+
+      // In production, this would be a security issue, but in development we can be more lenient
+      if (import.meta.env.PROD) {
+        throw new Error('State mismatch detected - potential security issue');
+      } else {
+        console.warn('⚠️ State mismatch in development mode - continuing anyway');
+      }
     }
 
     if (!codeVerifier) {

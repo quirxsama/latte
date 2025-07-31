@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { UI_CONFIG } from '../constants/spotify';
 import Header from '../components/common/Header';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import Button from '../components/common/Button';
+import LanguageSwitcher from '../components/common/LanguageSwitcher';
+import ThemeToggle from '../components/common/ThemeToggle';
 import spotifyApi from '../services/spotifyApi';
 
 const PageContainer = styled.div`
@@ -191,7 +194,7 @@ const AccountPage = () => {
 
           setUserStats({
             totalPlaylists: playlists.items.length,
-            followers: user.followers?.total || 0
+            followers: typeof user.followers === 'number' ? user.followers : user.followers?.total || 0
           });
         }
       } catch (err) {
@@ -249,14 +252,14 @@ const AccountPage = () => {
         <AccountContainer>
           <ProfileCard>
             <ProfileImage
-              src={user?.images?.[0]?.url || '/default-avatar.png'}
-              alt={user?.display_name || t('account.userAvatar')}
+              src={user?.profileImage || user?.images?.[0]?.url || '/default-avatar.png'}
+              alt={user?.displayName || user?.display_name || t('account.userAvatar')}
               onError={(e) => {
                 e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzMzIiByeD0iNjAiLz4KPHN2ZyB4PSIzMCIgeT0iMzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjY2Ij4KPHA+VXNlcjwvcD4KPHN2Zz4=';
               }}
             />
             <ProfileName>
-              {user?.display_name || (allowTestAccess ? 'Test User' : t('account.unknownUser'))}
+              {user?.displayName || user?.display_name || (allowTestAccess ? 'Test User' : t('account.unknownUser'))}
             </ProfileName>
             <ProfileEmail>
               {user?.email || (allowTestAccess ? 'test@example.com' : t('account.noEmail'))}
@@ -281,18 +284,21 @@ const AccountPage = () => {
               ⚙️ {t('account.settings.title')}
             </SectionTitle>
             
+
             <SettingItem>
               <div>
                 <SettingLabel>{t('account.settings.language')}</SettingLabel>
                 <SettingDescription>{t('account.settings.languageDesc')}</SettingDescription>
               </div>
+              <LanguageSwitcher />
             </SettingItem>
-            
+
             <SettingItem>
               <div>
                 <SettingLabel>{t('account.settings.theme')}</SettingLabel>
                 <SettingDescription>{t('account.settings.themeDesc')}</SettingDescription>
               </div>
+              <ThemeToggle />
             </SettingItem>
             
             <SettingItem>

@@ -97,13 +97,13 @@ router.post('/compare/:userId', auth, async (req, res) => {
             totalTracks: myTracks.length,
             totalArtists: myArtists.length,
             totalGenres: myGenres.length,
-            quizAverage: currentUser.quizStats.averageScore
+            totalTracks: myTracks.length
           },
           theirStats: {
             totalTracks: theirTracks.length,
             totalArtists: theirArtists.length,
             totalGenres: theirGenres.length,
-            quizAverage: targetUser.quizStats.averageScore
+            totalGenres: theirGenres.length
           }
         }
       }

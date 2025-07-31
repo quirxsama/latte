@@ -181,7 +181,7 @@ const PopularityBar = styled.div`
     content: '';
     display: block;
     height: 100%;
-    width: ${props => props.popularity}%;
+    width: ${props => props.$popularity}%;
     background: ${UI_CONFIG.COLORS.SPOTIFY_GREEN};
     border-radius: 2px;
     transition: width 0.3s ease;
@@ -282,7 +282,7 @@ const TrackCard = ({
       <TrackMeta>
         <Duration>{duration}</Duration>
         <Popularity>
-          <PopularityBar popularity={popularity} />
+          <PopularityBar $popularity={popularity} />
           <span>{popularity}%</span>
         </Popularity>
       </TrackMeta>

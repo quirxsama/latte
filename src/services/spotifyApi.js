@@ -96,6 +96,7 @@ class SpotifyApiService {
           time_range: timeRange, // short_term, medium_term, long_term
           limit: Math.min(limit, 50), // Spotify API limit is 50
           offset: offset,
+          market: 'from_token', // Use user's market for better preview availability
         },
       });
 
@@ -128,6 +129,43 @@ class SpotifyApiService {
       }
 
       throw new Error(`Failed to fetch top tracks: ${error.response?.status} - ${error.response?.data?.error?.message || error.message}`);
+    }
+  }
+
+  // Get user's saved tracks (liked songs)
+  async getCurrentUserSavedTracks(options = {}) {
+    const { limit = 20, offset = 0, market = 'from_token' } = options;
+    const cacheKey = `saved_tracks_${limit}_${offset}`;
+
+    // Check cache first
+    const cachedData = this.cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    try {
+      // Check rate limit
+      this.rateLimiter.makeRequest();
+
+      const response = await this.api.get('/me/tracks', {
+        params: {
+          limit: Math.min(limit, 50),
+          offset: offset,
+          market: market,
+        },
+      });
+
+      // Cache the result
+      this.cache.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      throw await this.makeRequest(() => this.api.get('/me/tracks', {
+        params: {
+          limit: Math.min(limit, 50),
+          offset: offset,
+          market: market,
+        },
+      }));
     }
   }
 

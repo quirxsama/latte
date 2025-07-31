@@ -19,7 +19,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "topTracks": "Top Tracks",
-    "quiz": "Quiz",
+
     "account": "Account",
     "accountSettings": "Account Settings",
     "privacySettings": "Privacy Settings",
@@ -212,39 +212,7 @@
       "logoutButton": "Logout"
     }
   },
-  "quiz": {
-    "title": "Music Quiz",
-    "description": "Test your music knowledge with your top tracks",
-    "startQuiz": "Start Quiz",
-    "playAgain": "Play Again",
-    "ready": "Ready to test your music knowledge?",
-    "instructions": "Listen to 5-second snippets of your top tracks and guess the correct song!",
-    "score": "Score",
-    "question": "Question",
-    "total": "Total",
-    "questionCounter": "Question {{current}} of {{total}}",
-    "playing": "Playing...",
-    "clickToPlay": "Click to play 5-second snippet",
-    "correct": "Correct!",
-    "wrong": "Wrong!",
-    "complete": "Quiz Complete!",
-    "gameComplete": "Quiz Complete!",
-    "finalScore": "Final Score",
-    "scoreMessages": {
-      "perfect": "Perfect! You know your music!",
-      "excellent": "Excellent music knowledge!",
-      "good": "Good job! Keep listening!",
-      "keepExploring": "Keep exploring your music taste!"
-    },
-    "noPreview": "No preview available for this track!",
-    "needMoreTracks": "Need at least 4 tracks to start the quiz!",
-    "preparingQuiz": "Preparing your music quiz...",
-    "notEnoughTracks": "Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews.",
-    "errors": {
-      "notEnoughTracks": "Not enough tracks available for the quiz.",
-      "notEnoughTracksWithPreview": "Not enough tracks with preview available for the quiz. You need at least 4 tracks with audio previews."
-    }
-  },
+
   "player": {
     "play": "Play",
     "pause": "Pause",

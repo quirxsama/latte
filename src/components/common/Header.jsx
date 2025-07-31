@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { UI_CONFIG } from '../../constants/spotify';
 import Button from './Button';
-import LanguageSwitcher from './LanguageSwitcher';
-import ThemeToggle from './ThemeToggle';
+
 
 const HeaderContainer = styled.header`
   position: static;
@@ -212,168 +211,9 @@ const UserStatus = styled.span`
   }
 `;
 
-const MobileMenuButton = styled.button`
-  display: none;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: ${UI_CONFIG.SPACING.SM};
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  width: 44px;
-  height: 44px;
-  align-items: center;
-  justify-content: center;
 
-  &:hover {
-    background: var(--color-surface-hover);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    transform: translateY(-1px);
-  }
 
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
-    display: flex;
-  }
 
-  @media (max-width: 480px) {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
-    padding: ${UI_CONFIG.SPACING.XS};
-  }
-`;
-
-const MobileMenu = styled.div`
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: var(--color-background-secondary);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--color-border);
-  border-top: 1px solid var(--color-border);
-  padding: ${UI_CONFIG.SPACING.LG};
-  box-shadow: var(--shadow-large);
-  z-index: 1000;
-  opacity: ${props => props.$isOpen ? 1 : 0};
-  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
-  transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-10px)'};
-  transition: all 0.3s ease;
-
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
-    display: block;
-    padding: ${UI_CONFIG.SPACING.MD};
-  }
-
-  @media (max-width: 480px) {
-    padding: ${UI_CONFIG.SPACING.SM};
-  }
-`;
-
-const MobileNavItem = styled.button`
-  display: block;
-  width: 100%;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: ${UI_CONFIG.SPACING.MD};
-  text-align: left;
-  border-radius: 12px;
-  margin-bottom: ${UI_CONFIG.SPACING.SM};
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: ${UI_CONFIG.SPACING.SM};
-
-  &:hover {
-    color: var(--color-text);
-    background: var(--color-surface-hover);
-    border-color: var(--color-primary);
-    transform: translateY(-1px);
-  }
-
-  &.active {
-    color: var(--color-primary);
-    background: var(--color-surface-active);
-    border-color: var(--color-primary);
-  }
-
-  @media (max-width: 480px) {
-    padding: ${UI_CONFIG.SPACING.SM};
-    font-size: 0.9rem;
-  }
-`;
-
-const NavigationSection = styled.nav`
-  display: flex;
-  align-items: center;
-  gap: ${UI_CONFIG.SPACING.LG};
-
-  @media (max-width: ${UI_CONFIG.BREAKPOINTS.MOBILE}) {
-    display: none;
-  }
-`;
-
-const NavLink = styled.button`
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: ${UI_CONFIG.SPACING.SM} ${UI_CONFIG.SPACING.LG};
-  border-radius: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: ${UI_CONFIG.SPACING.SM};
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: left 0.5s ease;
-  }
-
-  &:hover {
-    color: var(--color-text);
-    background: var(--color-surface-hover);
-    border-color: var(--color-primary);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(29, 185, 84, 0.15);
-
-    &::before {
-      left: 100%;
-    }
-  }
-
-  &.active {
-    color: var(--color-primary);
-    background: linear-gradient(135deg, var(--color-primary), #1ed760);
-    border-color: var(--color-primary);
-    color: var(--color-background);
-    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
-  }
-
-  .icon {
-    font-size: 1.1rem;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
-  }
-`;
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -452,9 +292,9 @@ const UserInfoContainer = styled.div`
 
 const Header = () => {
   const { isAuthenticated, user, logout, login, loading } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
-  const location = useLocation();
+
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -466,18 +306,7 @@ const Header = () => {
     }
   };
 
-  const handleNavigation = (path) => {
-    navigate(path);
-    setIsMobileMenuOpen(false);
-  };
 
-  const isActivePage = (path) => {
-    return location.pathname === path;
-  };
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   // Close account menu when clicking outside
   useEffect(() => {
@@ -492,6 +321,10 @@ const Header = () => {
   }, [isAccountMenuOpen]);
 
   const getFollowerCount = () => {
+    // Backend user has followers as number, Spotify user has followers.total
+    if (typeof user?.followers === 'number') {
+      return user.followers;
+    }
     return user?.followers?.total || 0;
   };
 
@@ -526,32 +359,9 @@ const Header = () => {
           Latte
         </Logo>
 
-        {isAuthenticated && (
-          <NavigationSection>
-            <NavLink
-              className={isActivePage('/dashboard') ? 'active' : ''}
-              onClick={() => handleNavigation('/dashboard')}
-            >
-              <span className="icon">🏠</span> {t('navigation.dashboard')}
-            </NavLink>
-            <NavLink
-              className={isActivePage('/quiz') ? 'active' : ''}
-              onClick={() => handleNavigation('/quiz')}
-            >
-              <span className="icon">🎵</span> {t('navigation.quiz')}
-            </NavLink>
-            <NavLink
-              className={isActivePage('/account') ? 'active' : ''}
-              onClick={() => handleNavigation('/account')}
-            >
-              <span className="icon">👤</span> {t('navigation.account')}
-            </NavLink>
-          </NavigationSection>
-        )}
+
 
         <UserSection>
-          <ThemeToggle />
-          <LanguageSwitcher />
 
           {isAuthenticated && user ? (
             <>
@@ -560,23 +370,23 @@ const Header = () => {
                 data-account-menu
               >
                 <UserInfo>
-                  {user.images && user.images.length > 0 ? (
+                  {(user.profileImage || (user.images && user.images.length > 0)) ? (
                     <UserAvatar
-                      src={user.images[0].url}
-                      alt={user.display_name || 'User'}
+                      src={user.profileImage || user.images[0].url}
+                      alt={user.displayName || user.display_name || 'User'}
                     />
                   ) : (
                     <UserAvatar
-                      src="https://via.placeholder.com/44x44/1DB954/191414?text=U"
+                      src="https://dummyimage.com/44x44/1DB954/191414.png&text=U"
                       alt="User"
                     />
                   )}
                   <UserDetails>
                     <UserName>
-                      {user.display_name || 'Spotify User'}
+                      {user.displayName || user.display_name || 'Spotify User'}
                     </UserName>
                     <UserStatus>
-                      {formatFollowerCount(getFollowerCount())} followers
+                      {formatFollowerCount(getFollowerCount())} {t('account.stats.followers')}
                     </UserStatus>
                   </UserDetails>
                 </UserInfo>
@@ -612,9 +422,7 @@ const Header = () => {
                 </AccountMenu>
               </UserInfoContainer>
 
-              <MobileMenuButton onClick={toggleMobileMenu}>
-                ☰
-              </MobileMenuButton>
+
             </>
           ) : (
             <ButtonGroup>
@@ -630,28 +438,7 @@ const Header = () => {
         </UserSection>
       </HeaderContent>
 
-      {isAuthenticated && (
-        <MobileMenu $isOpen={isMobileMenuOpen}>
-          <MobileNavItem
-            className={isActivePage('/dashboard') ? 'active' : ''}
-            onClick={() => handleNavigation('/dashboard')}
-          >
-            🏠 {t('navigation.dashboard')}
-          </MobileNavItem>
-          <MobileNavItem
-            className={isActivePage('/quiz') ? 'active' : ''}
-            onClick={() => handleNavigation('/quiz')}
-          >
-            🎵 {t('navigation.quiz')}
-          </MobileNavItem>
-          <MobileNavItem
-            className={isActivePage('/account') ? 'active' : ''}
-            onClick={() => handleNavigation('/account')}
-          >
-            👤 {t('navigation.account')}
-          </MobileNavItem>
-        </MobileMenu>
-      )}
+
     </HeaderContainer>
   );
 };

@@ -5,6 +5,16 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+// Import security middleware
+const {
+  cspMiddleware,
+  securityHeaders,
+  sanitizeRequest,
+  requestSizeLimit,
+  corsConfig,
+  securityLogger
+} = require('./middleware/security');
+
 const connectDB = require('./config/database');
 
 const app = express();
@@ -20,12 +30,29 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.'
 });
 
-// Middleware
-app.use(helmet());
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://127.0.0.1:5173',
-  credentials: true
+// Security middleware (order matters!)
+app.use(securityLogger); // Log security events first
+app.use(requestSizeLimit('10mb')); // Limit request size
+app.use(sanitizeRequest); // Sanitize inputs
+
+app.use(helmet({
+  contentSecurityPolicy: false, // We'll handle CSP separately for Spotify
+  crossOriginEmbedderPolicy: false,
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
 }));
+
+// Custom security headers
+app.use(securityHeaders);
+app.use(cspMiddleware);
+
+// CORS with enhanced security
+app.use(cors(corsConfig));
+
+// Rate limiting
 app.use(limiter);
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
@@ -35,7 +62,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/comparison', require('./routes/comparison'));
-app.use('/api/quiz', require('./routes/quiz'));
+
 app.use('/api/friends', require('./routes/friends'));
 app.use('/api/search', require('./routes/search'));
 

@@ -12,10 +12,14 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  // Get initial theme from localStorage or default to dark
+  // Get initial theme from localStorage or detect system preference
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('latte_theme');
-    return saved ? saved === 'dark' : true; // Default to dark theme
+    if (saved) {
+      return saved === 'dark';
+    }
+    // Auto-detect system theme preference
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   // Get current theme object
@@ -36,6 +40,21 @@ export const ThemeProvider = ({ children }) => {
     setIsDark(newIsDark);
     localStorage.setItem('latte_theme', themeName);
   };
+
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      // Only auto-update if user hasn't manually set a preference
+      const saved = localStorage.getItem('latte_theme');
+      if (!saved) {
+        setIsDark(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   // Update CSS custom properties when theme changes
   useEffect(() => {

@@ -19,7 +19,7 @@
   "navigation": {
     "dashboard": "Ana Sayfa",
     "topTracks": "En Çok Dinlenenler",
-    "quiz": "Müzik Yarışması",
+
     "account": "Hesap",
     "accountSettings": "Hesap Ayarları",
     "privacySettings": "Gizlilik Ayarları",
@@ -210,39 +210,6 @@
       "logout": "Çıkış Yap",
       "logoutDesc": "Hesabınızdan çıkış yapın ve tüm oturumu sonlandırın",
       "logoutButton": "Çıkış Yap"
-    }
-  },
-  "quiz": {
-    "title": "Müzik Yarışması",
-    "description": "En çok dinlediğiniz şarkılarla müzik bilginizi test edin",
-    "startQuiz": "Yarışmayı Başlat",
-    "playAgain": "Tekrar Oyna",
-    "ready": "Müzik bilginizi test etmeye hazır mısınız?",
-    "instructions": "En çok dinlediğiniz şarkıların 5 saniyelik bölümlerini dinleyin ve doğru şarkıyı tahmin edin!",
-    "score": "Puan",
-    "question": "Soru",
-    "total": "Toplam",
-    "questionCounter": "Soru {{current}} / {{total}}",
-    "playing": "Çalıyor...",
-    "clickToPlay": "5 saniyelik bölümü çalmak için tıklayın",
-    "correct": "Doğru!",
-    "wrong": "Yanlış!",
-    "complete": "Yarışma Tamamlandı!",
-    "gameComplete": "Yarışma Tamamlandı!",
-    "finalScore": "Final Puanı",
-    "scoreMessages": {
-      "perfect": "Mükemmel! Müziğinizi çok iyi biliyorsunuz!",
-      "excellent": "Mükemmel müzik bilgisi!",
-      "good": "İyi iş! Dinlemeye devam edin!",
-      "keepExploring": "Müzik zevkinizi keşfetmeye devam edin!"
-    },
-    "noPreview": "Bu şarkı için önizleme mevcut değil!",
-    "needMoreTracks": "Yarışmayı başlatmak için en az 4 şarkı gerekli!",
-    "preparingQuiz": "Müzik yarışmanız hazırlanıyor...",
-    "notEnoughTracks": "Yarışma için yeterli önizlemeli şarkı yok. Ses önizlemeli en az 4 şarkıya ihtiyacınız var.",
-    "errors": {
-      "notEnoughTracks": "Yarışma için yeterli şarkı yok.",
-      "notEnoughTracksWithPreview": "Yarışma için yeterli önizlemeli şarkı yok. Ses önizlemeli en az 4 şarkıya ihtiyacınız var."
     }
   },
   "player": {

@@ -12,6 +12,37 @@ dist
 dist-ssr
 *.local
 
+# Environment variables and secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.secrets
+*.pem
+*.key
+*.crt
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+server/data/*.db
+server/data/*.sqlite
+
+# Security and sensitive files
+config/secrets.json
+config/keys.json
+*.p12
+*.pfx
+auth_keys/
+certificates/
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,6 +53,25 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Backup files
+*.bak
+*.backup
+*.old
 FUTURE_FEATURES.md
 # env
 .env

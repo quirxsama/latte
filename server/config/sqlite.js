@@ -52,7 +52,7 @@ class SQLiteDB {
         music_stats TEXT DEFAULT '{}',
         privacy_settings TEXT DEFAULT '{"allowComparison": false, "showProfile": true, "showTopTracks": false, "showTopArtists": false, "allowFriendRequests": true}',
         settings TEXT DEFAULT '{"language": "en", "theme": "dark"}',
-        quiz_stats TEXT DEFAULT '{"totalQuizzes": 0, "averageScore": 0, "bestScore": 0}',
+
         last_login DATETIME,
         last_data_update DATETIME,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -155,7 +155,7 @@ class SQLiteDB {
     const allowedFields = [
       'email', 'display_name', 'profile_image', 'country', 
       'followers', 'music_stats', 'privacy_settings', 
-      'settings', 'quiz_stats', 'last_login', 'last_data_update'
+      'settings', 'last_login', 'last_data_update'
     ];
     
     const updateFields = [];
@@ -183,21 +183,27 @@ class SQLiteDB {
     return this.getUserById(id);
   }
 
+  getAllUsers() {
+    const stmt = this.db.prepare('SELECT * FROM users');
+    const users = stmt.all();
+    return users.map(user => this.formatUser(user));
+  }
+
   searchUsers(searchTerm, limit = 10, excludeUserId = null) {
     let query = `
-      SELECT * FROM users 
+      SELECT * FROM users
       WHERE (display_name LIKE ? OR spotify_id LIKE ?)
     `;
     const params = [`%${searchTerm}%`, `%${searchTerm}%`];
-    
+
     if (excludeUserId) {
       query += ' AND id != ?';
       params.push(excludeUserId);
     }
-    
+
     query += ' ORDER BY display_name LIMIT ?';
     params.push(limit);
-    
+
     const stmt = this.db.prepare(query);
     const users = stmt.all(...params);
     return users.map(user => this.formatUser(user));
@@ -218,7 +224,7 @@ class SQLiteDB {
       musicStats: user.music_stats ? JSON.parse(user.music_stats) : {},
       privacy: user.privacy_settings ? JSON.parse(user.privacy_settings) : {},
       settings: user.settings ? JSON.parse(user.settings) : {},
-      quizStats: user.quiz_stats ? JSON.parse(user.quiz_stats) : {},
+
       lastLogin: user.last_login,
       lastDataUpdate: user.last_data_update,
       createdAt: user.created_at,

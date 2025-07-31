@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -7,10 +7,12 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 import LoginPage from './components/common/LoginPage';
 import CallbackPage from './components/common/CallbackPage';
 import HomePage from './pages/HomePage';
-import QuizPage from './pages/QuizPage';
+
 import AccountPage from './pages/AccountPage';
 import LandingPage from './pages/LandingPage';
+import AuthTestPage from './pages/AuthTestPage';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import { initSecurity } from './utils/security';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -39,6 +41,14 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
+  useEffect(() => {
+    // Initialize security on app start
+    const securityInitialized = initSecurity();
+    if (!securityInitialized) {
+      console.error('🚨 Security initialization failed');
+    }
+  }, []);
+
   return (
     <ErrorBoundary>
       <ThemeProvider>
@@ -70,14 +80,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/quiz"
-              element={
-                <ProtectedRoute>
-                  <QuizPage />
-                </ProtectedRoute>
-              }
-            />
+
             <Route
               path="/account"
               element={
@@ -85,6 +88,10 @@ function App() {
                   <AccountPage />
                 </ProtectedRoute>
               }
+            />
+            <Route
+              path="/auth-test"
+              element={<AuthTestPage />}
             />
             <Route
               path="*"

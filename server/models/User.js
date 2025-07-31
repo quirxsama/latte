@@ -128,19 +128,7 @@ const userSchema = new mongoose.Schema({
     }]
   },
 
-  // Quiz statistics
-  quizStats: {
-    totalGames: { type: Number, default: 0 },
-    totalScore: { type: Number, default: 0 },
-    bestScore: { type: Number, default: 0 },
-    averageScore: { type: Number, default: 0 },
-    lastPlayed: { type: Date, default: null },
-    achievements: [{
-      name: String,
-      description: String,
-      unlockedAt: { type: Date, default: Date.now }
-    }]
-  },
+
 
   // Social features
   friends: [{
@@ -186,18 +174,7 @@ userSchema.pre('save', function(next) {
   next();
 });
 
-// Calculate average quiz score
-userSchema.methods.updateQuizStats = function(newScore) {
-  this.quizStats.totalGames += 1;
-  this.quizStats.totalScore += newScore;
-  this.quizStats.averageScore = this.quizStats.totalScore / this.quizStats.totalGames;
-  
-  if (newScore > this.quizStats.bestScore) {
-    this.quizStats.bestScore = newScore;
-  }
-  
-  this.quizStats.lastPlayed = new Date();
-};
+
 
 // Calculate music similarity with another user
 userSchema.methods.calculateSimilarity = function(otherUser) {

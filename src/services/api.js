@@ -152,51 +152,7 @@ class ApiService {
     }
   }
 
-  // Quiz endpoints
-  async submitQuizScore(score, totalQuestions = 10) {
-    try {
-      const response = await this.api.post('/quiz/score', {
-        score,
-        totalQuestions
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Submit quiz score error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to submit quiz score');
-    }
-  }
 
-  async getQuizStats() {
-    try {
-      const response = await this.api.get('/quiz/stats');
-      return response.data;
-    } catch (error) {
-      console.error('Get quiz stats error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to get quiz stats');
-    }
-  }
-
-  async getQuizLeaderboard(type = 'average', limit = 10) {
-    try {
-      const response = await this.api.get('/quiz/leaderboard', {
-        params: { type, limit }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Get quiz leaderboard error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to get quiz leaderboard');
-    }
-  }
-
-  async getQuizAchievements() {
-    try {
-      const response = await this.api.get('/quiz/achievements');
-      return response.data;
-    } catch (error) {
-      console.error('Get quiz achievements error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to get achievements');
-    }
-  }
 
   // Utility methods
   isAuthenticated() {

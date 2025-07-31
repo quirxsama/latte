@@ -36,7 +36,7 @@ const spotifyAuth = async (req, res) => {
         displayName,
         profileImage,
         country,
-        followers: followers?.total || 0,
+        followers: followers || 0,
         lastLogin: new Date().toISOString()
       });
     } else {
@@ -47,7 +47,7 @@ const spotifyAuth = async (req, res) => {
         displayName,
         profileImage,
         country,
-        followers: followers?.total || 0
+        followers: followers || 0
       });
     }
 
@@ -67,7 +67,7 @@ const spotifyAuth = async (req, res) => {
         followers: user.followers,
         privacy: user.privacy,
         settings: user.settings,
-        quizStats: user.quizStats,
+
         createdAt: user.createdAt
       }
     });
@@ -103,7 +103,7 @@ const getProfile = async (req, res) => {
         privacy: user.privacy,
         settings: user.settings,
         musicStats: user.musicStats,
-        quizStats: user.quizStats,
+
         lastLogin: user.lastLogin,
         createdAt: user.createdAt
       }

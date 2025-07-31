@@ -20,7 +20,7 @@ router.get('/search', auth, async (req, res) => {
         { email: { $regex: q, $options: 'i' } }
       ]
     })
-    .select('displayName profileImage country followers musicStats.topGenres quizStats.averageScore')
+    .select('displayName profileImage country followers musicStats.topGenres')
     .limit(parseInt(limit));
 
     res.json({
@@ -31,8 +31,7 @@ router.get('/search', auth, async (req, res) => {
         profileImage: user.profileImage,
         country: user.country,
         followers: user.followers,
-        topGenres: user.musicStats.topGenres.slice(0, 3),
-        averageQuizScore: user.quizStats.averageScore
+        topGenres: user.musicStats.topGenres.slice(0, 3)
       }))
     });
 
@@ -59,7 +58,7 @@ router.get('/similar', auth, async (req, res) => {
       _id: { $ne: req.userId },
       'privacy.allowComparison': true
     })
-    .select('displayName profileImage country followers musicStats quizStats')
+    .select('displayName profileImage country followers musicStats')
     .limit(50);
 
     const similarities = users.map(user => {
@@ -72,7 +71,7 @@ router.get('/similar', auth, async (req, res) => {
           country: user.country,
           followers: user.followers,
           topGenres: user.musicStats.topGenres.slice(0, 3),
-          averageQuizScore: user.quizStats.averageScore
+          totalGenres: user.musicStats.topGenres.length
         },
         ...similarity
       };
@@ -100,7 +99,7 @@ router.get('/similar', auth, async (req, res) => {
 router.get('/:id/public', auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
-      .select('displayName profileImage country followers musicStats quizStats privacy createdAt');
+      .select('displayName profileImage country followers musicStats privacy createdAt');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -116,12 +115,7 @@ router.get('/:id/public', auth, async (req, res) => {
       profileImage: user.profileImage,
       country: user.country,
       followers: user.followers,
-      memberSince: user.createdAt,
-      quizStats: {
-        totalGames: user.quizStats.totalGames,
-        bestScore: user.quizStats.bestScore,
-        averageScore: user.quizStats.averageScore
-      }
+      memberSince: user.createdAt
     };
 
     if (user.privacy.showTopTracks) {
