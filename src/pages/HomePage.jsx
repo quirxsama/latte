@@ -247,9 +247,9 @@ const HomePage = () => {
       <PageContainer>
         <Header />
         <MainContent>
-          <LoadingSpinner 
-            size="large" 
-            text="Loading..." 
+          <LoadingSpinner
+            size="large"
+            text={t('common.loading')}
           />
         </MainContent>
       </PageContainer>

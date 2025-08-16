@@ -174,9 +174,26 @@ const updateMusicStats = async (req, res) => {
 
     if (topTracks) {
       musicStats.topTracks = topTracks.map(track => ({
+        id: track.id,
         spotifyId: track.id,
         name: track.name,
-        artists: track.artists.map(a => a.name),
+        artists: track.artists.map(a => ({
+          id: a.id,
+          name: a.name,
+          external_urls: a.external_urls
+        })),
+        album: {
+          id: track.album?.id,
+          name: track.album?.name,
+          images: track.album?.images || [],
+          release_date: track.album?.release_date,
+          external_urls: track.album?.external_urls
+        },
+        duration_ms: track.duration_ms,
+        popularity: track.popularity || 0,
+        external_urls: track.external_urls,
+        preview_url: track.preview_url,
+        explicit: track.explicit,
         playCount: track.popularity || 0,
         timeRange: req.body.timeRange || 'medium_term',
         lastUpdated: new Date().toISOString()

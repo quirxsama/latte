@@ -21,7 +21,7 @@
   "navigation": {
     "dashboard": "Ana Sayfa",
     "topTracks": "En Çok Dinlenenler",
-
+    "friends": "Arkadaşlar",
     "account": "Hesap",
     "accountSettings": "Hesap Ayarları",
     "privacySettings": "Gizlilik Ayarları",
@@ -127,6 +127,15 @@
     "tracks": "şarkı",
     "openInSpotify": "Spotify'da Aç",
     "playOnSpotify": "Spotify'da Çal"
+  },
+  "music": {
+    "genres": "Müzik Türleri",
+    "topTracks": "En Çok Dinlenenler",
+    "noData": "Müzik Verisi Yok",
+    "tracksCount": "{{count}} şarkı"
+  },
+  "profile": {
+    "followers": "takipçi"
   },
   "stats": {
     "title": "Müzik İstatistikleriniz",
@@ -255,7 +264,10 @@
     "requestDeclined": "Arkadaşlık isteği reddedildi",
     "requestSentSuccess": "Arkadaşlık isteği gönderildi",
     "friendRemoved": "Arkadaş kaldırıldı",
-    "error": "Bir hata oluştu"
+    "error": "Bir hata oluştu",
+    "userTopTracks": "{{name}}'in En Çok Dinledikleri",
+    "noMusicDataShared": "{{name}} henüz müzik istatistiklerini paylaşmamış.",
+    "addFriend": "Arkadaş Ekle"
   },
 
   "player": {
@@ -289,7 +301,9 @@
     "noComparisons": "Henüz karşılaştırma yok",
     "searchPlaceholder": "Karşılaştırmak için kullanıcı arayın...",
     "privacyNotAllowed": "Bu kullanıcı karşılaştırmalara izin vermiyor",
-    "cannotCompareYourself": "Kendinizle karşılaştırma yapamazsınız"
+    "cannotCompareYourself": "Kendinizle karşılaştırma yapamazsınız",
+    "loading": "Karşılaştırma yükleniyor...",
+    "sharedItems": "Ortak Öğeler"
   },
   "settings": {
     "title": "Ayarlar",
@@ -330,6 +344,11 @@
     "networkError": "Ağ hatası. Lütfen bağlantınızı kontrol edin.",
     "serverError": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
     "notFound": "Sayfa bulunamadı",
+    "failedToLoadProfile": "Arkadaş profili yüklenemedi",
+    "loadingProfile": "Profil Yükleme Hatası",
+    "profileNotFound": "Profil Bulunamadı",
+    "profileNotFoundDescription": "Bu kullanıcının profili bulunamadı.",
+    "failedToLoadComparison": "Müzik karşılaştırması yüklenemedi",
     "unauthorized": "Bu sayfaya erişim yetkiniz yok",
     "forbidden": "Erişim yasak",
     "rateLimited": "Çok fazla istek. Lütfen bir dakika bekleyin.",

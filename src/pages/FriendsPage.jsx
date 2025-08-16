@@ -665,8 +665,8 @@ const FriendsPage = () => {
                       disabled={user.relationshipStatus !== 'none'}
                       onClick={() => user.relationshipStatus === 'none' && handleAddFriend(user.id)}
                     >
-                      {user.relationshipStatus === 'friends' ? 'Friends' :
-                       user.relationshipStatus === 'pending' ? 'Pending' : 'Add Friend'}
+                      {user.relationshipStatus === 'friends' ? t('friends.title') :
+                       user.relationshipStatus === 'pending' ? t('friends.requestSent') : t('friends.addFriend')}
                     </Button>
                   </SearchResultItem>
                 ))}

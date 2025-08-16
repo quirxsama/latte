@@ -21,7 +21,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "topTracks": "Top Tracks",
-
+    "friends": "Friends",
     "account": "Account",
     "accountSettings": "Account Settings",
     "privacySettings": "Privacy Settings",
@@ -127,6 +127,15 @@
     "tracks": "tracks",
     "openInSpotify": "Open in Spotify",
     "playOnSpotify": "Play on Spotify"
+  },
+  "music": {
+    "genres": "Music Genres",
+    "topTracks": "Top Tracks",
+    "noData": "No Music Data",
+    "tracksCount": "{{count}} tracks"
+  },
+  "profile": {
+    "followers": "followers"
   },
   "stats": {
     "title": "Your Music Statistics",
@@ -255,7 +264,10 @@
     "requestDeclined": "Friend request declined",
     "requestSentSuccess": "Friend request sent",
     "friendRemoved": "Friend removed",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "userTopTracks": "{{name}}'s Top Tracks",
+    "noMusicDataShared": "{{name}} hasn't shared their music statistics yet.",
+    "addFriend": "Add Friend"
   },
 
   "player": {
@@ -289,7 +301,9 @@
     "noComparisons": "No comparisons yet",
     "searchPlaceholder": "Search for users to compare...",
     "privacyNotAllowed": "This user doesn't allow comparisons",
-    "cannotCompareYourself": "Cannot compare with yourself"
+    "cannotCompareYourself": "Cannot compare with yourself",
+    "loading": "Loading comparison...",
+    "sharedItems": "Shared Items"
   },
   "settings": {
     "title": "Settings",
@@ -330,6 +344,11 @@
     "networkError": "Network error. Please check your connection.",
     "serverError": "Server error. Please try again later.",
     "notFound": "Page not found",
+    "failedToLoadProfile": "Failed to load friend profile",
+    "loadingProfile": "Error Loading Profile",
+    "profileNotFound": "Profile Not Found",
+    "profileNotFoundDescription": "This user's profile could not be found.",
+    "failedToLoadComparison": "Failed to load music comparison",
     "unauthorized": "You are not authorized to access this page",
     "forbidden": "Access forbidden",
     "rateLimited": "Too many requests. Please wait a moment.",

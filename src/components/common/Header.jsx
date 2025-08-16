@@ -292,11 +292,10 @@ const UserInfoContainer = styled.div`
 
 const Header = () => {
   const { isAuthenticated, user, logout, login, loading } = useAuth();
-
+  const { t } = useTranslation();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
 
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const handleLogoClick = () => {
     if (isAuthenticated) {
@@ -345,7 +344,7 @@ const Header = () => {
             <LogoIcon>L</LogoIcon>
             Latte
           </Logo>
-          <div>Loading...</div>
+          <div>{t('common.loading')}</div>
         </HeaderContent>
       </HeaderContainer>
     );

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 // import anime from 'animejs/lib/anime.es.js';
 import { UI_CONFIG, ANIMATION_CONFIG } from '../../constants/spotify';
@@ -135,18 +136,19 @@ const LoadMoreButton = styled.button`
   }
 `;
 
-const TrackList = ({ 
-  tracks = [], 
-  loading = false, 
+const TrackList = ({
+  tracks = [],
+  loading = false,
   error = null,
   onTrackPlay,
   currentTrack = null,
-  title = "Your Top Tracks",
-  subtitle = "Discover your most played songs",
+  title,
+  subtitle,
   onLoadMore = null,
   hasMore = false,
   loadingMore = false
 }) => {
+  const { t } = useTranslation();
   const containerRef = useRef(null);
   const [visibleTracks, setVisibleTracks] = useState([]);
 
@@ -218,8 +220,8 @@ const TrackList = ({
   return (
     <ListContainer ref={containerRef}>
       <ListHeader>
-        <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
+        <Title>{title || t('tracks.yourTopTracks')}</Title>
+        <Subtitle>{subtitle || t('tracks.discoverMusic')}</Subtitle>
       </ListHeader>
 
       <ScrollContainer>
@@ -241,14 +243,14 @@ const TrackList = ({
             onClick={onLoadMore}
             disabled={loadingMore}
           >
-            {loadingMore ? 'Loading...' : 'Load More Tracks'}
+            {loadingMore ? t('common.loading') : t('tracks.loadMore')}
           </LoadMoreButton>
         )}
 
         {loadingMore && (
           <LoadingSpinner 
             size="medium" 
-            text="Loading more tracks..." 
+            text={t('tracks.loading')}
           />
         )}
       </ScrollContainer>
